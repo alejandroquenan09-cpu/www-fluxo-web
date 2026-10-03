@@ -43,7 +43,7 @@ export function Navbar() {
         hidden && !open && "-translate-y-[130%]",
       )}
     >
-      <nav className="mx-auto flex max-w-6xl items-center justify-between rounded-full glass-strong px-4 py-2.5 sm:px-5">
+      <nav className="mx-auto flex max-w-6xl items-center justify-between rounded-full nav-glass px-4 py-2.5 sm:px-5">
         <Logo />
         <ul className="hidden items-center gap-1 md:flex">
           {NAV.map((n) => (
