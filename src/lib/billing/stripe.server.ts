@@ -24,7 +24,7 @@ export async function stripeRequest<T>(path: string, params: Record<string, unkn
   const res = await fetch(`https://api.stripe.com/v1/${path}${method === "GET" && body ? `?${body}` : ""}`, {
     method,
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/x-www-form-urlencoded" },
-    body: method === "GET" ? undefined : body,
+    body: method === "GET" ? null : body,
   });
   const json = await res.json();
   if (!res.ok) throw new Error(json?.error?.message ?? "Error de Stripe");

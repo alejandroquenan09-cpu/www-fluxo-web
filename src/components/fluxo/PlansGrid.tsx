@@ -48,9 +48,7 @@ export function PlansGrid({ currentPlan }: { currentPlan?: string }) {
                   </Button>
                 ) : isFree ? (
                   <Button asChild variant="glass" size="xl" className="w-full">
-                    <Link to={user ? "/dashboard" : "/auth"} search={user ? undefined : { mode: "signup" }}>
-                      {user ? "Ir a mi panel" : "Comenzar gratis"}
-                    </Link>
+                    {user ? <Link to="/dashboard">Ir a mi panel</Link> : <Link to="/auth" search={{ mode: "signup" }}>Comenzar gratis</Link>}
                   </Button>
                 ) : (
                   <Button variant="flow" size="xl" className="w-full" disabled={busy === p.id} onClick={() => upgrade(p.id)}>
