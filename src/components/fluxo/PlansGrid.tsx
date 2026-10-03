@@ -10,7 +10,7 @@ import { useAuth } from "@/lib/auth";
 import { PlanCard } from "./PlanCard";
 import { Reveal } from "./Reveal";
 
-export function PlansGrid({ currentPlan }: { currentPlan?: string }) {
+export function PlansGrid({ currentPlan }: { currentPlan?: string | undefined }) {
   const { data: plans = [] } = useQuery(plansQuery);
   const { user } = useAuth();
   const navigate = useNavigate();
