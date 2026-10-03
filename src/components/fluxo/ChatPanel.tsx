@@ -130,7 +130,7 @@ export function ChatPanel({ compact = false }: { compact?: boolean }) {
           {messages.length === 0 && !typing && (
             <div className="grid h-full place-items-center text-center">
               <div className="animate-fade-in">
-                <p className="font-display text-2xl">¿En qué fluimos hoy?</p>
+                <p className="font-display text-2xl">¿En qué te puedo ayudar hoy?</p>
                 <p className="mt-2 text-sm text-muted-foreground">Escribe una pregunta o una idea para empezar.</p>
               </div>
             </div>
