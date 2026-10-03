@@ -206,12 +206,28 @@
   from { transform: scale(0.6); opacity: 0.6; }
   to { transform: scale(1.8); opacity: 0; }
 }
+@keyframes bubble-rise {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  6% { opacity: var(--bubble-opacity, 0.5); }
+  88% { opacity: var(--bubble-opacity, 0.5); }
+  100% { transform: translate3d(var(--bubble-drift, 0px), -118vh, 0); opacity: 0; }
+}
 
 @utility animate-blob { animation: blob-drift 28s ease-in-out infinite; }
 @utility animate-float { animation: float-y 7s ease-in-out infinite; }
 @utility animate-stream { animation: stream 6s linear infinite; }
 @utility animate-typing { animation: typing-dot 1.2s ease-in-out infinite; }
 @utility animate-ripple { animation: ripple 3.5s ease-out infinite; }
+@utility animate-bubble-rise { animation-name: bubble-rise; animation-play-state: inherit; }
+
+.bubble {
+  background:
+    radial-gradient(circle at 30% 28%, oklch(1 0 0 / 10%) 0%, oklch(1 0 0 / 3%) 28%, oklch(0.06 0.02 240 / 70%) 65%),
+    oklch(0.06 0.02 240 / 35%);
+  border: 1px solid oklch(1 0 0 / 9%);
+  box-shadow: inset -2px -3px 6px oklch(0 0 0 / 35%), inset 1px 2px 4px oklch(1 0 0 / 8%);
+  opacity: 0;
+}
 
 /* Scroll reveal */
 @utility reveal {

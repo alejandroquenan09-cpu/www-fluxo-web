@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, RefreshCw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SiteLayout, SectionHeader } from "@/components/fluxo/SiteLayout";
-import { FlowVisual } from "@/components/fluxo/FlowVisual";
 import { Reveal } from "@/components/fluxo/Reveal";
 import { ServicesGrid } from "@/components/fluxo/ServicesGrid";
 import { PlansGrid } from "@/components/fluxo/PlansGrid";
@@ -64,11 +63,8 @@ function Home() {
               <Link to="/servicios">Explorar Fluxo</Link>
             </Button>
           </div>
-        </div>
-        <div className="mt-6 sm:-mt-4">
-          <FlowVisual />
-        </div>
-      </section>
+      </div>
+    </section>
 
       {/* Concept */}
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
