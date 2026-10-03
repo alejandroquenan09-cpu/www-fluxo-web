@@ -1,0 +1,117 @@
+import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { Menu, X } from "lucide-react";
+import { Logo } from "./Logo";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth";
+import { cn } from "@/lib/utils";
+
+const NAV = [
+  { to: "/", label: "Inicio" },
+  { to: "/servicios", label: "Servicios" },
+  { to: "/ia", label: "IA" },
+  { to: "/planes", label: "Planes" },
+  { to: "/sobre", label: "Sobre Fluxo" },
+] as const;
+
+export function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 12);
+    on();
+    window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+  }, [open]);
+
+  return (
+    <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6">
+      <nav
+        className={cn(
+          "mx-auto flex max-w-6xl items-center justify-between rounded-full px-4 py-2.5 transition-all duration-500 sm:px-5",
+          scrolled ? "glass-strong" : "border border-transparent",
+        )}
+      >
+        <Logo />
+        <ul className="hidden items-center gap-1 md:flex">
+          {NAV.map((n) => (
+            <li key={n.to}>
+              <Link
+                to={n.to}
+                activeOptions={{ exact: true }}
+                className="rounded-full px-3.5 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                activeProps={{ className: "bg-glass-strong text-foreground" }}
+              >
+                {n.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="hidden items-center gap-2 md:flex">
+          {user ? (
+            <Button asChild variant="flow" size="sm" className="h-9 px-5">
+              <Link to="/dashboard">Mi panel</Link>
+            </Button>
+          ) : (
+            <>
+              <Link to="/auth" search={{ mode: "login" }} className="px-3 text-sm text-muted-foreground hover:text-foreground">
+                Iniciar sesión
+              </Link>
+              <Button asChild variant="flow" size="sm" className="h-9 px-5">
+                <Link to="/auth" search={{ mode: "signup" }}>Crear cuenta</Link>
+              </Button>
+            </>
+          )}
+        </div>
+        <button
+          className="grid h-10 w-10 place-items-center rounded-full glass md:hidden"
+          onClick={() => setOpen((o) => !o)}
+          aria-label={open ? "Cerrar menú" : "Abrir menú"}
+          aria-expanded={open}
+        >
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </nav>
+
+      {open && (
+        <div className="fixed inset-x-3 top-20 z-40 animate-scale-in rounded-3xl glass-strong p-4 md:hidden">
+          <ul className="flex flex-col">
+            {NAV.map((n, i) => (
+              <li key={n.to} className="animate-fade-in" style={{ animationDelay: `${i * 40}ms`, animationFillMode: "both" }}>
+                <Link
+                  to={n.to}
+                  onClick={() => setOpen(false)}
+                  className="block rounded-2xl px-4 py-3.5 font-display text-lg text-foreground/90 hover:bg-glass"
+                >
+                  {n.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-3 grid grid-cols-2 gap-2 border-t border-border pt-4">
+            {user ? (
+              <Button asChild variant="flow" size="xl" className="col-span-2">
+                <Link to="/dashboard" onClick={() => setOpen(false)}>Mi panel</Link>
+              </Button>
+            ) : (
+              <>
+                <Button asChild variant="glass" size="xl">
+                  <Link to="/auth" search={{ mode: "login" }} onClick={() => setOpen(false)}>Iniciar sesión</Link>
+                </Button>
+                <Button asChild variant="flow" size="xl">
+                  <Link to="/auth" search={{ mode: "signup" }} onClick={() => setOpen(false)}>Crear cuenta</Link>
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
