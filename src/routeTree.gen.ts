@@ -17,6 +17,12 @@ import { Route as PlanesRouteImport } from './routes/planes'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ServiciosRouteImport } from './routes/servicios'
 import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardConfiguracionRouteImport } from './routes/dashboard.configuracion'
+import { Route as DashboardIaRouteImport } from './routes/dashboard.ia'
+import { Route as DashboardPerfilRouteImport } from './routes/dashboard.perfil'
+import { Route as DashboardServiciosRouteImport } from './routes/dashboard.servicios'
+import { Route as DashboardSuscripcionRouteImport } from './routes/dashboard.suscripcion'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
 
 const IndexRoute = IndexRouteImport.update({
@@ -59,6 +65,36 @@ const SobreRoute = SobreRouteImport.update({
   path: '/sobre',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardConfiguracionRoute = DashboardConfiguracionRouteImport.update({
+  id: '/configuracion',
+  path: '/configuracion',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardIaRoute = DashboardIaRouteImport.update({
+  id: '/ia',
+  path: '/ia',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardPerfilRoute = DashboardPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardServiciosRoute = DashboardServiciosRouteImport.update({
+  id: '/servicios',
+  path: '/servicios',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSuscripcionRoute = DashboardSuscripcionRouteImport.update({
+  id: '/suscripcion',
+  path: '/suscripcion',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   id: '/api/public/stripe-webhook',
   path: '/api/public/stripe-webhook',
@@ -68,35 +104,52 @@ const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/ia': typeof IaRoute
   '/planes': typeof PlanesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/servicios': typeof ServiciosRoute
   '/sobre': typeof SobreRoute
+  '/dashboard/configuracion': typeof DashboardConfiguracionRoute
+  '/dashboard/ia': typeof DashboardIaRoute
+  '/dashboard/perfil': typeof DashboardPerfilRoute
+  '/dashboard/servicios': typeof DashboardServiciosRoute
+  '/dashboard/suscripcion': typeof DashboardSuscripcionRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/dashboard': typeof DashboardRoute
   '/ia': typeof IaRoute
   '/planes': typeof PlanesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/servicios': typeof ServiciosRoute
   '/sobre': typeof SobreRoute
+  '/dashboard/configuracion': typeof DashboardConfiguracionRoute
+  '/dashboard/ia': typeof DashboardIaRoute
+  '/dashboard/perfil': typeof DashboardPerfilRoute
+  '/dashboard/servicios': typeof DashboardServiciosRoute
+  '/dashboard/suscripcion': typeof DashboardSuscripcionRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/ia': typeof IaRoute
   '/planes': typeof PlanesRoute
   '/reset-password': typeof ResetPasswordRoute
   '/servicios': typeof ServiciosRoute
   '/sobre': typeof SobreRoute
+  '/dashboard/configuracion': typeof DashboardConfiguracionRoute
+  '/dashboard/ia': typeof DashboardIaRoute
+  '/dashboard/perfil': typeof DashboardPerfilRoute
+  '/dashboard/servicios': typeof DashboardServiciosRoute
+  '/dashboard/suscripcion': typeof DashboardSuscripcionRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/api/public/stripe-webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRouteTypes {
@@ -110,17 +163,28 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/servicios'
     | '/sobre'
+    | '/dashboard/configuracion'
+    | '/dashboard/ia'
+    | '/dashboard/perfil'
+    | '/dashboard/servicios'
+    | '/dashboard/suscripcion'
+    | '/dashboard/'
     | '/api/public/stripe-webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/dashboard'
     | '/ia'
     | '/planes'
     | '/reset-password'
     | '/servicios'
     | '/sobre'
+    | '/dashboard/configuracion'
+    | '/dashboard/ia'
+    | '/dashboard/perfil'
+    | '/dashboard/servicios'
+    | '/dashboard/suscripcion'
+    | '/dashboard'
     | '/api/public/stripe-webhook'
   id:
     | '__root__'
@@ -132,13 +196,19 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/servicios'
     | '/sobre'
+    | '/dashboard/configuracion'
+    | '/dashboard/ia'
+    | '/dashboard/perfil'
+    | '/dashboard/servicios'
+    | '/dashboard/suscripcion'
+    | '/dashboard/'
     | '/api/public/stripe-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
-  DashboardRoute: typeof DashboardRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   IaRoute: typeof IaRoute
   PlanesRoute: typeof PlanesRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -205,6 +275,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SobreRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/configuracion': {
+      id: '/dashboard/configuracion'
+      path: '/configuracion'
+      fullPath: '/dashboard/configuracion'
+      preLoaderRoute: typeof DashboardConfiguracionRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/ia': {
+      id: '/dashboard/ia'
+      path: '/ia'
+      fullPath: '/dashboard/ia'
+      preLoaderRoute: typeof DashboardIaRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/perfil': {
+      id: '/dashboard/perfil'
+      path: '/perfil'
+      fullPath: '/dashboard/perfil'
+      preLoaderRoute: typeof DashboardPerfilRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/servicios': {
+      id: '/dashboard/servicios'
+      path: '/servicios'
+      fullPath: '/dashboard/servicios'
+      preLoaderRoute: typeof DashboardServiciosRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/suscripcion': {
+      id: '/dashboard/suscripcion'
+      path: '/suscripcion'
+      fullPath: '/dashboard/suscripcion'
+      preLoaderRoute: typeof DashboardSuscripcionRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/api/public/stripe-webhook': {
       id: '/api/public/stripe-webhook'
       path: '/api/public/stripe-webhook'
@@ -215,10 +327,32 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface DashboardRouteChildren {
+  DashboardConfiguracionRoute: typeof DashboardConfiguracionRoute
+  DashboardIaRoute: typeof DashboardIaRoute
+  DashboardPerfilRoute: typeof DashboardPerfilRoute
+  DashboardServiciosRoute: typeof DashboardServiciosRoute
+  DashboardSuscripcionRoute: typeof DashboardSuscripcionRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardConfiguracionRoute: DashboardConfiguracionRoute,
+  DashboardIaRoute: DashboardIaRoute,
+  DashboardPerfilRoute: DashboardPerfilRoute,
+  DashboardServiciosRoute: DashboardServiciosRoute,
+  DashboardSuscripcionRoute: DashboardSuscripcionRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
-  DashboardRoute: DashboardRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   IaRoute: IaRoute,
   PlanesRoute: PlanesRoute,
   ResetPasswordRoute: ResetPasswordRoute,
