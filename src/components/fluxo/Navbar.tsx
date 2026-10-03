@@ -15,12 +15,18 @@ const NAV = [
 ] as const;
 
 export function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
-    const on = () => setScrolled(window.scrollY > 12);
+    let lastY = window.scrollY;
+    const on = () => {
+      const y = window.scrollY;
+      // Below the hero anchor: hide on scroll down, reveal on scroll up.
+      setHidden(y > 120 && y > lastY + 4);
+      lastY = y;
+    };
     on();
     window.addEventListener("scroll", on, { passive: true });
     return () => window.removeEventListener("scroll", on);
