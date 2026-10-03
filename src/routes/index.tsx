@@ -20,7 +20,6 @@ export const Route = createFileRoute("/")({
 });
 
 const PILLARS = [
-  { icon: Droplets, title: "Fluido", text: "Todo en un solo lugar, sin fricción." },
   { icon: RefreshCw, title: "En evolución", text: "Fluxo se actualiza al ritmo de la tecnología." },
   { icon: Sparkles, title: "Inteligente", text: "IA integrada para pensar contigo." },
 ];
