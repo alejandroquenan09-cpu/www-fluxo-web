@@ -14,7 +14,240 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_usage: {
+        Row: {
+          created_at: string
+          id: string
+          model: string | null
+          provider: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          model?: string | null
+          provider: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          model?: string | null
+          provider?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plans: {
+        Row: {
+          ai_daily_limit: number
+          created_at: string
+          description: string
+          features: Json
+          id: string
+          is_active: boolean
+          name: string
+          price_label: string
+          sort_order: number
+          stripe_price_id: string | null
+        }
+        Insert: {
+          ai_daily_limit?: number
+          created_at?: string
+          description?: string
+          features?: Json
+          id: string
+          is_active?: boolean
+          name: string
+          price_label?: string
+          sort_order?: number
+          stripe_price_id?: string | null
+        }
+        Update: {
+          ai_daily_limit?: number
+          created_at?: string
+          description?: string
+          features?: Json
+          id?: string
+          is_active?: boolean
+          name?: string
+          price_label?: string
+          sort_order?: number
+          stripe_price_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          min_plan: string
+          name: string
+          slug: string
+          sort_order: number
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          min_plan?: string
+          name: string
+          slug: string
+          sort_order?: number
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          min_plan?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "services_min_plan_fkey"
+            columns: ["min_plan"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean
+          current_period_end: string | null
+          plan_id: string
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean
+          current_period_end?: string | null
+          plan_id?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean
+          current_period_end?: string | null
+          plan_id?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
