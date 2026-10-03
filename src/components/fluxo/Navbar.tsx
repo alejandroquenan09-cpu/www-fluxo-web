@@ -37,13 +37,13 @@ export function Navbar() {
   }, [open]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6">
-      <nav
-        className={cn(
-          "mx-auto flex max-w-6xl items-center justify-between rounded-full px-4 py-2.5 transition-all duration-500 sm:px-5",
-          scrolled ? "glass-strong" : "border border-transparent",
-        )}
-      >
+    <header
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 px-3 pt-3 transition-transform duration-500 ease-out sm:px-6",
+        hidden && !open && "-translate-y-[130%]",
+      )}
+    >
+      <nav className="mx-auto flex max-w-6xl items-center justify-between rounded-full glass-strong px-4 py-2.5 sm:px-5">
         <Logo />
         <ul className="hidden items-center gap-1 md:flex">
           {NAV.map((n) => (
