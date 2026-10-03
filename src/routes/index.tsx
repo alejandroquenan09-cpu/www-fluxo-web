@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Droplets, RefreshCw, Sparkles } from "lucide-react";
+import { ArrowRight, RefreshCw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SiteLayout, SectionHeader } from "@/components/fluxo/SiteLayout";
 import { FlowVisual } from "@/components/fluxo/FlowVisual";
@@ -77,7 +77,7 @@ function Home() {
             Como el agua, la tecnología <span className="text-flow">nunca se detiene</span>. Fluxo avanza con ella para que nunca te quedes atrás.
           </p>
         </Reveal>
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {PILLARS.map((p, i) => (
             <Reveal key={p.title} delay={i * 100} className="glass rounded-3xl p-6">
               <p.icon className="h-5 w-5 text-primary" />
