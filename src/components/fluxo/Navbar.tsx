@@ -86,7 +86,7 @@ export function Navbar() {
       </nav>
 
       {open && (
-        <div className="fixed inset-x-3 top-20 z-40 animate-scale-in rounded-3xl glass-strong p-4 md:hidden">
+        <div className="fixed inset-x-3 top-20 z-40 animate-scale-in rounded-3xl nav-glass p-4 md:hidden">
           <ul className="flex flex-col">
             {NAV.map((n, i) => (
               <li key={n.to} className="animate-fade-in" style={{ animationDelay: `${i * 40}ms`, animationFillMode: "both" }}>
