@@ -150,6 +150,14 @@
   -webkit-backdrop-filter: blur(24px) saturate(150%);
   box-shadow: var(--shadow-glass);
 }
+@utility nav-glass {
+  position: relative;
+  background: var(--nav-glass);
+  border: 1px solid oklch(0.84 0.12 200 / 30%);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  box-shadow: 0 8px 32px oklch(0.5 0.14 225 / 25%), inset 0 1px 0 oklch(1 0 0 / 12%);
+}
 @utility sheen {
   &::before {
     content: "";
