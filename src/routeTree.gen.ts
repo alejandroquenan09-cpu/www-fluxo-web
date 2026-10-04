@@ -21,6 +21,7 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as DashboardConfiguracionRouteImport } from './routes/dashboard.configuracion'
 import { Route as DashboardIaRouteImport } from './routes/dashboard.ia'
 import { Route as DashboardPerfilRouteImport } from './routes/dashboard.perfil'
+import { Route as DashboardReservasRouteImport } from './routes/dashboard.reservas'
 import { Route as DashboardServiciosRouteImport } from './routes/dashboard.servicios'
 import { Route as DashboardSuscripcionRouteImport } from './routes/dashboard.suscripcion'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe-webhook'
@@ -85,6 +86,11 @@ const DashboardPerfilRoute = DashboardPerfilRouteImport.update({
   path: '/perfil',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardReservasRoute = DashboardReservasRouteImport.update({
+  id: '/reservas',
+  path: '/reservas',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardServiciosRoute = DashboardServiciosRouteImport.update({
   id: '/servicios',
   path: '/servicios',
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/configuracion': typeof DashboardConfiguracionRoute
   '/dashboard/ia': typeof DashboardIaRoute
   '/dashboard/perfil': typeof DashboardPerfilRoute
+  '/dashboard/reservas': typeof DashboardReservasRoute
   '/dashboard/servicios': typeof DashboardServiciosRoute
   '/dashboard/suscripcion': typeof DashboardSuscripcionRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/dashboard/configuracion': typeof DashboardConfiguracionRoute
   '/dashboard/ia': typeof DashboardIaRoute
   '/dashboard/perfil': typeof DashboardPerfilRoute
+  '/dashboard/reservas': typeof DashboardReservasRoute
   '/dashboard/servicios': typeof DashboardServiciosRoute
   '/dashboard/suscripcion': typeof DashboardSuscripcionRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -147,6 +155,7 @@ export interface FileRoutesById {
   '/dashboard/configuracion': typeof DashboardConfiguracionRoute
   '/dashboard/ia': typeof DashboardIaRoute
   '/dashboard/perfil': typeof DashboardPerfilRoute
+  '/dashboard/reservas': typeof DashboardReservasRoute
   '/dashboard/servicios': typeof DashboardServiciosRoute
   '/dashboard/suscripcion': typeof DashboardSuscripcionRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -166,6 +175,7 @@ export interface FileRouteTypes {
     | '/dashboard/configuracion'
     | '/dashboard/ia'
     | '/dashboard/perfil'
+    | '/dashboard/reservas'
     | '/dashboard/servicios'
     | '/dashboard/suscripcion'
     | '/dashboard/'
@@ -182,6 +192,7 @@ export interface FileRouteTypes {
     | '/dashboard/configuracion'
     | '/dashboard/ia'
     | '/dashboard/perfil'
+    | '/dashboard/reservas'
     | '/dashboard/servicios'
     | '/dashboard/suscripcion'
     | '/dashboard'
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/dashboard/configuracion'
     | '/dashboard/ia'
     | '/dashboard/perfil'
+    | '/dashboard/reservas'
     | '/dashboard/servicios'
     | '/dashboard/suscripcion'
     | '/dashboard/'
@@ -303,6 +315,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPerfilRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/reservas': {
+      id: '/dashboard/reservas'
+      path: '/reservas'
+      fullPath: '/dashboard/reservas'
+      preLoaderRoute: typeof DashboardReservasRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/servicios': {
       id: '/dashboard/servicios'
       path: '/servicios'
@@ -331,6 +350,7 @@ interface DashboardRouteChildren {
   DashboardConfiguracionRoute: typeof DashboardConfiguracionRoute
   DashboardIaRoute: typeof DashboardIaRoute
   DashboardPerfilRoute: typeof DashboardPerfilRoute
+  DashboardReservasRoute: typeof DashboardReservasRoute
   DashboardServiciosRoute: typeof DashboardServiciosRoute
   DashboardSuscripcionRoute: typeof DashboardSuscripcionRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
@@ -340,6 +360,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardConfiguracionRoute: DashboardConfiguracionRoute,
   DashboardIaRoute: DashboardIaRoute,
   DashboardPerfilRoute: DashboardPerfilRoute,
+  DashboardReservasRoute: DashboardReservasRoute,
   DashboardServiciosRoute: DashboardServiciosRoute,
   DashboardSuscripcionRoute: DashboardSuscripcionRoute,
   DashboardIndexRoute: DashboardIndexRoute,
