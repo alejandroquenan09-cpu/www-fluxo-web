@@ -31,7 +31,15 @@ export function DashHome() {
         <div className="glass rounded-3xl p-6"><p className="text-sm text-muted-foreground">Plan actual</p><p className="mt-2 font-display text-2xl text-flow">{plan}</p></div>
         <div className="glass rounded-3xl p-6"><p className="text-sm text-muted-foreground">Uso de IA hoy</p><p className="mt-2 font-display text-2xl">{usage?.today ?? 0} / {limit}</p><p className="text-xs text-muted-foreground">{usage?.conversations ?? 0} conversaciones</p></div>
       </div>
-      <Button asChild variant="flow" size="xl" className="mt-6"><Link to="/dashboard/ia">Abrir Fluxo IA</Link></Button>
+      <div className="mt-6 flex flex-wrap gap-3">
+  <Button asChild variant="flow" size="xl">
+    <Link to="/dashboard/ia">Abrir Fluxo IA</Link>
+  </Button>
+  <Button asChild variant="glass" size="xl">
+    <Link to="/servicios">Explorar servicios</Link>
+  </Button>
+</div>
+
     </div>
   );
 }

@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { Link } from "@tanstack/react-router";
+import { Sparkles, User } from "lucide-react";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 
@@ -8,6 +10,24 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <Navbar />
       <main className="page-enter">{children}</main>
       <Footer />
+
+      {/* Botones flotantes fijos sin tapar contenido */}
+      <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-2.5 pointer-events-auto">
+        <Link
+          to="/ia"
+          className="glass flex items-center gap-2 rounded-full px-4 py-2.5 text-xs sm:text-sm font-medium shadow-xl hover:border-primary/50 transition-all backdrop-blur-md"
+        >
+          <Sparkles className="h-4 w-4 text-cyan-400 animate-pulse" />
+          <span>Fluxo IA</span>
+        </Link>
+        <Link
+          to="/dashboard"
+          className="glass flex items-center gap-2 rounded-full px-4 py-2.5 text-xs sm:text-sm font-medium shadow-xl hover:border-primary/50 transition-all backdrop-blur-md"
+        >
+          <User className="h-4 w-4 text-cyan-400" />
+          <span>Espacio personal</span>
+        </Link>
+      </div>
     </div>
   );
 }
