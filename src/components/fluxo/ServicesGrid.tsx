@@ -3,7 +3,8 @@ import { servicesQuery } from "@/lib/catalog";
 import { ServiceCard } from "./ServiceCard";
 import { Reveal } from "./Reveal";
 
-const EXCLUDED_SLUGS = ["flujo-ia", "espacio-personal"];
+const EXCLUDED_SLUGS = ["fluxo-ia", "flujo-ia", "espacio-personal"];
+
 
 export function ServicesGrid() {
   const { data: services = [], isLoading } = useQuery(servicesQuery);
