@@ -149,7 +149,7 @@ function BookingForm({ service, onDone, onBack }: { service: Service; onDone: ()
       deposit_amount: price != null ? Math.round(price * DEPOSIT_RATE) : null,
     });
     setSending(false);
-    if (error) return toast.error("No pudimos enviar tu solicitud. Intenta de nuevo.");
+    if (error) { toast.error("No pudimos enviar tu solicitud. Intenta de nuevo."); return; }
     qc.invalidateQueries({ queryKey: ["bookings"] });
     toast.success("Solicitud enviada. Un técnico te llamará para confirmar fecha, hora y lugar.");
     onDone();

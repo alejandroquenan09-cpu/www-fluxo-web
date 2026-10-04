@@ -36,7 +36,7 @@ function Reservas() {
 
   const update = async (id: string, patch: { status: string; assigned_to?: string }) => {
     const { error } = await supabase.from("bookings").update(patch).eq("id", id);
-    if (error) return toast.error("No se pudo actualizar");
+    if (error) { toast.error("No se pudo actualizar"); return; }
     qc.invalidateQueries({ queryKey: ["bookings"] });
   };
 
