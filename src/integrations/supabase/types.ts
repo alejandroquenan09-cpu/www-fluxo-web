@@ -38,6 +38,65 @@ export type Database = {
         }
         Relationships: []
       }
+      bookings: {
+        Row: {
+          assigned_to: string | null
+          created_at: string
+          deposit_amount: number | null
+          deposit_status: string
+          email: string
+          estimated_price: number | null
+          id: string
+          location: string
+          notes: string | null
+          phone: string
+          service_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string
+          deposit_amount?: number | null
+          deposit_status?: string
+          email: string
+          estimated_price?: number | null
+          id?: string
+          location: string
+          notes?: string | null
+          phone: string
+          service_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string
+          deposit_amount?: number | null
+          deposit_status?: string
+          email?: string
+          estimated_price?: number | null
+          id?: string
+          location?: string
+          notes?: string | null
+          phone?: string
+          service_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           created_at: string
@@ -172,6 +231,7 @@ export type Database = {
           id: string
           min_plan: string
           name: string
+          price_cop: number | null
           slug: string
           sort_order: number
           status: string
@@ -184,6 +244,7 @@ export type Database = {
           id?: string
           min_plan?: string
           name: string
+          price_cop?: number | null
           slug: string
           sort_order?: number
           status?: string
@@ -196,6 +257,7 @@ export type Database = {
           id?: string
           min_plan?: string
           name?: string
+          price_cop?: number | null
           slug?: string
           sort_order?: number
           status?: string
@@ -251,15 +313,39 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "funcionario"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -386,6 +472,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "funcionario"],
+    },
   },
 } as const

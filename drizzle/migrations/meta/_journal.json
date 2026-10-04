@@ -8,6 +8,13 @@
       "when": 1790993371903,
       "tag": "0000_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791072835938,
+      "tag": "0001_bookings_prices_roles",
+      "breakpoints": true
     }
   ]
 }
