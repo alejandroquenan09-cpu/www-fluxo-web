@@ -60,39 +60,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-:root {
-  --radius: 1rem;
-  /* deep water */
-  --background: oklch(0.16 0.03 240);
-  --foreground: oklch(0.96 0.01 220);
-  --card: oklch(0.2 0.03 238);
-  --card-foreground: oklch(0.96 0.01 220);
-  --popover: oklch(0.2 0.03 238);
-  --popover-foreground: oklch(0.96 0.01 220);
-  /* luminous aqua */
-  --primary: oklch(0.84 0.12 200);
-  --primary-foreground: oklch(0.18 0.04 240);
-  --primary-glow: oklch(0.78 0.13 175);
-  --secondary: oklch(0.26 0.035 238);
-  --secondary-foreground: oklch(0.94 0.01 220);
-  --muted: oklch(0.24 0.03 238);
-  --muted-foreground: oklch(0.72 0.03 225);
-  --accent: oklch(0.3 0.05 220);
-  --accent-foreground: oklch(0.96 0.01 220);
-  --destructive: oklch(0.66 0.19 22);
-  --destructive-foreground: oklch(0.98 0 0);
-  --success: oklch(0.8 0.14 165);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.84 0.12 200 / 60%);
 
-  --glass: oklch(1 0 0 / 5%);
-  --glass-strong: oklch(1 0 0 / 9%);
-  --nav-glass: oklch(0.26 0.07 235);
-  --glass-border: oklch(1 0 0 / 14%);
-
-  
-}
 :root {
   --radius: 1rem;
   /* Modo Claro - Agua cristalina */
