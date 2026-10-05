@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
@@ -32,8 +32,9 @@ const bookingSchema = z.object({
   notes: z.string().trim().max(1000).optional(),
 });
 
-export function ServiceCard({ service }: { service: Service }) {
+export function ServiceCard({ service, openSignal, bookSignal }: { service: Service; openSignal?: number | undefined; bookSignal?: boolean | undefined }) {
   const [open, setOpen] = useState(false);
+  useEffect(() => { if (openSignal) setOpen(true); }, [openSignal]);
   const Icon = ICONS[service.icon] ?? Sparkles;
   const soon = service.status === "soon";
   return (
@@ -60,15 +61,15 @@ export function ServiceCard({ service }: { service: Service }) {
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl">
-          <ServiceDetails service={service} Icon={Icon} onDone={() => setOpen(false)} />
+          <ServiceDetails service={service} Icon={Icon} startBooking={!!bookSignal} onDone={() => setOpen(false)} />
         </DialogContent>
       </Dialog>
     </>
   );
 }
 
-function ServiceDetails({ service, Icon, onDone }: { service: Service; Icon: LucideIcon; onDone: () => void }) {
-  const [booking, setBooking] = useState(false);
+function ServiceDetails({ service, Icon, onDone, startBooking }: { service: Service; Icon: LucideIcon; onDone: () => void; startBooking: boolean }) {
+  const [booking, setBooking] = useState(startBooking);
   const lines = (service.details ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
   const link = LINKS[service.slug];
   return (
