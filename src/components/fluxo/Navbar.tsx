@@ -5,6 +5,7 @@ import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "./ThemeToggle";
 
 const NAV = [
   { to: "/", label: "Inicio" },
@@ -60,6 +61,7 @@ export function Navbar() {
           ))}
         </ul>
         <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle />
           {user ? (
             <Button asChild variant="flow" size="sm" className="h-9 px-5">
               <Link to="/dashboard">Mi panel</Link>
@@ -75,7 +77,18 @@ export function Navbar() {
             </>
           )}
         </div>
-        <button
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
+          <button
+            className="grid h-10 w-10 place-items-center rounded-full glass"
+            onClick={() => setOpen((o) => !o)}
+            aria-label={open ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={open}
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
+
           className="grid h-10 w-10 place-items-center rounded-full glass md:hidden"
           onClick={() => setOpen((o) => !o)}
           aria-label={open ? "Cerrar menú" : "Abrir menú"}
