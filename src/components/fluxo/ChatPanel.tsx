@@ -1,12 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowUp, MessageSquare, Plus, Sparkles } from "lucide-react";
+import { useRouter } from "@tanstack/react-router";
+import { ArrowUpRight, ArrowUp, MessageSquare, Plus, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { sendChatMessage } from "@/lib/ai/chat.functions";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
+
+const ACTION_RE = /\[\[(ir|auto):(\/[^|\]]*)\|([^\]]+)\]\]/g;
+function parseActions(content: string) {
+  const actions: { auto: boolean; href: string; label: string }[] = [];
+  const text = content.replace(ACTION_RE, (_m, kind: string, href: string, label: string) => {
+    actions.push({ auto: kind === "auto", href, label: label.trim() });
+    return "";
+  }).trim();
+  return { text, actions };
+}
 
 type Msg = { id: string; role: "user" | "assistant"; content: string };
 
@@ -14,6 +25,8 @@ export function ChatPanel({ compact = false }: { compact?: boolean }) {
   const { user } = useAuth();
   const qc = useQueryClient();
   const send = useServerFn(sendChatMessage);
+  const router = useRouter();
+  const go = (href: string) => router.history.push(href);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
@@ -66,6 +79,8 @@ export function ChatPanel({ compact = false }: { compact?: boolean }) {
       setConversationId(res.conversationId);
       setMock(res.mock);
       setMessages((m) => [...m, { id: crypto.randomUUID(), role: "assistant", content: res.reply }]);
+      const auto = parseActions(res.reply).actions.find((a) => a.auto);
+      if (auto) setTimeout(() => go(auto.href), 1200);
       qc.invalidateQueries({ queryKey: ["conversations"] });
       qc.invalidateQueries({ queryKey: ["usage"] });
     } catch (err) {
@@ -135,7 +150,9 @@ export function ChatPanel({ compact = false }: { compact?: boolean }) {
               </div>
             </div>
           )}
-          {messages.map((m) => (
+          {messages.map((m) => {
+            const { text, actions } = m.role === "assistant" ? parseActions(m.content) : { text: m.content, actions: [] };
+            return (
             <div key={m.id} className={cn("flex animate-fade-in", m.role === "user" ? "justify-end" : "justify-start")}>
               <div
                 className={cn(
@@ -143,10 +160,25 @@ export function ChatPanel({ compact = false }: { compact?: boolean }) {
                   m.role === "user" ? "rounded-br-lg bg-flow text-primary-foreground" : "rounded-bl-lg glass-strong",
                 )}
               >
-                {m.content}
+                {text}
+                {actions.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {actions.map((a, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => go(a.href)}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-flow px-3.5 py-1.5 text-xs font-medium text-primary-foreground transition hover:scale-105"
+                      >
+                        {a.label} <ArrowUpRight className="h-3.5 w-3.5" />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
-          ))}
+            );
+          })}
           {typing && (
             <div className="flex animate-fade-in justify-start" aria-label="Fluxo IA está escribiendo">
               <div className="glass-strong flex gap-1.5 rounded-3xl rounded-bl-lg px-4 py-4">
