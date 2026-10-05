@@ -4,7 +4,8 @@ import { Menu, X } from "lucide-react";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"; import { ThemeToggle } from "./ThemeToggle";
+
 import { ThemeToggle } from "./ThemeToggle";
 
 const NAV = [
