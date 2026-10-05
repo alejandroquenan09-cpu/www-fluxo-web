@@ -4,8 +4,7 @@ import { Menu, X } from "lucide-react";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
-import { cn } from "@/lib/utils"; import { ThemeToggle } from "./ThemeToggle";
-
+import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./ThemeToggle";
 
 const NAV = [
@@ -25,7 +24,6 @@ export function Navbar() {
     let lastY = window.scrollY;
     const on = () => {
       const y = window.scrollY;
-      // Below the hero anchor: hide on scroll down, reveal on scroll up.
       setHidden(y > 120 && y > lastY + 4);
       lastY = y;
     };
@@ -61,6 +59,7 @@ export function Navbar() {
             </li>
           ))}
         </ul>
+
         <div className="hidden items-center gap-2 md:flex">
           <ThemeToggle />
           {user ? (
@@ -78,6 +77,7 @@ export function Navbar() {
             </>
           )}
         </div>
+
         <div className="flex items-center gap-2 md:hidden">
           <ThemeToggle />
           <button
@@ -89,14 +89,6 @@ export function Navbar() {
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
-
-          className="grid h-10 w-10 place-items-center rounded-full glass md:hidden"
-          onClick={() => setOpen((o) => !o)}
-          aria-label={open ? "Cerrar menú" : "Abrir menú"}
-          aria-expanded={open}
-        >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
       </nav>
 
       {open && (
