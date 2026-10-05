@@ -9,10 +9,10 @@ import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/ia")({
   head: () => ({
     meta: [
-      { title: "Fluxo IA — Inteligencia que fluye" },
-      { name: "description", content: "Conversa con Fluxo IA: un asistente privado, rápido y elegante." },
-      { property: "og:title", content: "Fluxo IA — Inteligencia que fluye" },
-      { property: "og:description", content: "Conversa con Fluxo IA: un asistente privado, rápido y elegante." },
+      { title: "Floppy — Inteligencia que fluye" },
+      { name: "description", content: "Conversa con Floppy: un asistente privado, rápido y elegante." },
+      { property: "og:title", content: "Floppy — Inteligencia que fluye" },
+      { property: "og:description", content: "Conversa con Floppy: un asistente privado, rápido y elegante." },
     ],
   }),
   component: IAPage,
@@ -24,7 +24,7 @@ function IAPage() {
     <SiteLayout>
       <section className="mx-auto max-w-5xl px-4 pt-36 sm:px-6">
         <Reveal>
-          <SectionHeader eyebrow="Inteligencia artificial" title="Fluxo IA" subtitle="Pregunta lo que quieras. Tus conversaciones son solo tuyas." />
+          <SectionHeader eyebrow="Inteligencia artificial" title="Floppy" subtitle="Pregunta lo que quieras. Tus conversaciones son solo tuyas." />
         </Reveal>
         <Reveal className="mt-12" delay={120}>
           {loading ? (
