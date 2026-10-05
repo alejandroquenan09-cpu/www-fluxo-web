@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { SiteLayout, SectionHeader } from "@/components/fluxo/SiteLayout";
 import { Reveal } from "@/components/fluxo/Reveal";
 import { ServicesGrid } from "@/components/fluxo/ServicesGrid";
-import { PlansGrid } from "@/components/fluxo/PlansGrid";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -126,15 +126,7 @@ function Home() {
         </Reveal>
       </section>
 
-      {/* Plans */}
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <Reveal>
-          <SectionHeader eyebrow="Planes" title="Elige cómo fluir." subtitle="Empieza gratis. Amplía cuando lo necesites." />
-        </Reveal>
-        <div className="mt-12">
-          <PlansGrid />
-        </div>
-      </section>
+     
     </SiteLayout>
   );
 }
