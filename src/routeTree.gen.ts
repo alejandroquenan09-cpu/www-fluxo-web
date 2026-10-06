@@ -329,13 +329,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardServiciosRouteImport
       parentRoute: typeof DashboardRoute
     }
-    '/dashboard/suscripcion': {
-      id: '/dashboard/suscripcion'
-      path: '/suscripcion'
-      fullPath: '/dashboard/suscripcion'
-      preLoaderRoute: typeof DashboardSuscripcionRouteImport
-      parentRoute: typeof DashboardRoute
-    }
+    
     '/api/public/stripe-webhook': {
       id: '/api/public/stripe-webhook'
       path: '/api/public/stripe-webhook'
