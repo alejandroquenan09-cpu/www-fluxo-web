@@ -9,4 +9,5 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Persist the shared light/dark appearance through the client-side theme control so every public and signed-in view stays consistent.
+- Use one root ThemeProvider for client-side appearance state, persistent storage and all theme controls, including notifications, so public and signed-in views stay synchronized.
+- Render the shared water image through LiquidBackground with global appearance tokens so both themes retain the same visual identity.
