@@ -3,7 +3,7 @@ import { SiteLayout, SectionHeader } from "@/components/fluxo/SiteLayout";
 import { PlansGrid } from "@/components/fluxo/PlansGrid";
 import { Reveal } from "@/components/fluxo/Reveal";
 
-export const Route = createFileRoute("/planes")({
+export const Route = createFileRoute("/Nuestra Esencia")({
   head: () => ({
     meta: [
       { property: "og:type", content: "website" },
