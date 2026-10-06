@@ -18,8 +18,8 @@ ALTER TABLE public.plans ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Plans are public" ON public.plans FOR SELECT TO anon, authenticated USING (is_active);
 
 INSERT INTO public.plans (id, name, description, price_label, features, ai_daily_limit, sort_order) VALUES
-('free','Gratis','Acceso limitado a las funciones de Fluxo.','$0','["Acceso a Fluxo IA con límite diario","Servicios básicos","Dashboard personal"]',20,1),
-('premium','Premium','Acceso ampliado a las funciones y servicios.','Precio por definir','["Fluxo IA con límite ampliado","Todos los servicios disponibles","Acceso anticipado a novedades","Soporte prioritario"]',500,2);
+(,'Vision','Acceso limitado a las funciones de Fluxo.','$0','["Acceso a Fluxo IA con límite diario","Servicios básicos","Dashboard personal"]',20,1),
+('Mision','Premium','Acceso ampliado a las funciones y servicios.','Precio por definir','["Fluxo IA con límite ampliado","Todos los servicios disponibles","Acceso anticipado a novedades","Soporte prioritario"]',500,2);
 
 -- SERVICES (public catalog, extensible)
 CREATE TABLE public.services (
