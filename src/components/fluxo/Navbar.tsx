@@ -11,9 +11,10 @@ const NAV = [
   { to: "/", label: "Inicio" },
   { to: "/servicios", label: "Servicios" },
   { to: "/ia", label: "Floppy" },
-  { to: "/nuestra-esencia", label: "Nuestra Esencia" },
+  { to: "/Nuestra Esencia", label: "Nuestra Esencia" },
   { to: "/sobre", label: "Sobre Fluxo" },
 ] as const;
+
 
 export function Navbar() {
   const [hidden, setHidden] = useState(false);
