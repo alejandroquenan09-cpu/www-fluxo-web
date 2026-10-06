@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "@/lib/auth";
 import { Toaster } from "@/components/ui/sonner";
 import { LiquidBackground } from "@/components/fluxo/LiquidBackground";
+import { ThemeProvider, useTheme } from "@/lib/theme";
 
 function NotFoundComponent() {
   return (
@@ -110,11 +111,18 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
       <AuthProvider>
         <LiquidBackground />
         <Outlet />
-        <Toaster position="top-center" theme="dark" />
+        <ThemedToaster />
       </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
+}
+
+function ThemedToaster() {
+  const { theme } = useTheme();
+  return <Toaster position="top-center" theme={theme} />;
 }

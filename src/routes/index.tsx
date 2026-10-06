@@ -9,6 +9,8 @@ import { ServicesGrid } from "@/components/fluxo/ServicesGrid";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Fluxo — Technology that never stops flowing" },
       { name: "description", content: "La tecnología nunca deja de avanzar. Nosotros tampoco. Descubre Fluxo: IA y servicios que evolucionan contigo." },
       { property: "og:title", content: "Fluxo — Technology that never stops flowing" },

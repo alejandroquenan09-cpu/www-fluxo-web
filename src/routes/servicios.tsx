@@ -6,6 +6,8 @@ import { Reveal } from "@/components/fluxo/Reveal";
 export const Route = createFileRoute("/servicios")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Servicios — Fluxo" },
       { name: "description", content: "Todo fluye en un solo lugar: los servicios de Fluxo, siempre en evolución." },
       { property: "og:title", content: "Servicios — Fluxo" },

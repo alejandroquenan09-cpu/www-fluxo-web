@@ -63,6 +63,8 @@
 
 :root {
   --radius: 1rem;
+  --water-opacity: 0.38;
+  --water-veil: linear-gradient(180deg, oklch(0.98 0.015 220 / 45%), oklch(0.98 0.015 220 / 72%));
   /* Modo Claro - Agua cristalina */
   --background: oklch(0.98 0.015 220);
   --foreground: oklch(0.2 0.03 240);
@@ -86,14 +88,14 @@
   --input: oklch(0.2 0.03 240 / 14%);
   --ring: oklch(0.55 0.18 220 / 50%);
 
-  --glass: oklch(1 1 1 / 65%);
-  --glass-strong: oklch(1 1 1 / 85%);
+  --glass: oklch(1 0 0 / 65%);
+  --glass-strong: oklch(1 0 0 / 85%);
   --nav-glass: oklch(0.94 0.02 220);
   --glass-border: oklch(0.2 0.03 240 / 10%);
 
   --gradient-flow: linear-gradient(120deg, var(--primary) 0%, var(--primary-glow) 50%, oklch(0.5 0.15 240) 100%);
-  --gradient-sheen: linear-gradient(135deg, oklch(1 1 1 / 50%) 0%, oklch(1 1 1 / 10%) 50%, oklch(1 1 1 / 30%) 100%);
-  --shadow-glass: 0 1px 0 0 oklch(1 1 1 / 60%) inset, 0 15px 35px -15px oklch(0.3 0.05 230 / 15%);
+  --gradient-sheen: linear-gradient(135deg, oklch(1 0 0 / 50%) 0%, oklch(1 0 0 / 10%) 50%, oklch(1 0 0 / 30%) 100%);
+  --shadow-glass: 0 1px 0 0 oklch(1 0 0 / 60%) inset, 0 15px 35px -15px oklch(0.3 0.05 230 / 15%);
   --shadow-glow: 0 0 0 1px oklch(0.55 0.18 220 / 25%), 0 10px 30px -10px oklch(0.55 0.18 220 / 30%);
 
   --chart-1: oklch(0.55 0.18 220);
@@ -112,12 +114,14 @@
 }
 
 .dark {
-  /* Modo Oscuro - Agua profunda (el tema original) */
-  --background: oklch(0.16 0.03 240);
+  /* Modo oscuro: agua limpia iluminada */
+  --water-opacity: 0.32;
+  --water-veil: linear-gradient(180deg, oklch(0.31 0.065 220 / 32%), oklch(0.31 0.065 220 / 72%));
+  --background: oklch(0.31 0.065 220);
   --foreground: oklch(0.96 0.01 220);
-  --card: oklch(0.2 0.03 238);
+  --card: oklch(0.30 0.05 220);
   --card-foreground: oklch(0.96 0.01 220);
-  --popover: oklch(0.2 0.03 238);
+  --popover: oklch(0.30 0.05 220);
   --popover-foreground: oklch(0.96 0.01 220);
   --primary: oklch(0.84 0.12 200);
   --primary-foreground: oklch(0.18 0.04 240);
@@ -312,3 +316,6 @@
   }
   .reveal { opacity: 1; transform: none; filter: none; }
 }
+
+.water-texture { opacity: var(--water-opacity); }
+.water-veil { background: var(--water-veil); }

@@ -3,6 +3,7 @@ import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-rout
 import { CalendarCheck, CreditCard, Home, LayoutGrid, LogOut, Settings, Sparkles, User } from "lucide-react";
 import { useAuth, signOut } from "@/lib/auth";
 import { Logo } from "@/components/fluxo/Logo";
+import { ThemeToggle } from "@/components/fluxo/ThemeToggle";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -10,6 +11,10 @@ export const Route = createFileRoute("/dashboard")({
       { title: "Mi panel — Fluxo" },
       { name: "description", content: "Tu espacio personal en Fluxo." },
       { name: "robots", content: "noindex" },
+      { property: "og:title", content: "Mi panel — Fluxo" },
+      { property: "og:description", content: "Tu espacio personal en Fluxo." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: DashboardLayout,
@@ -53,7 +58,7 @@ function DashboardLayout() {
     <div className="mx-auto flex min-h-screen max-w-7xl gap-6 px-3 pb-24 pt-4 sm:px-6 lg:pb-6">
       {/* Desktop sidebar */}
       <aside className="glass sticky top-4 hidden h-[calc(100vh-2rem)] w-60 shrink-0 flex-col rounded-3xl p-4 lg:flex">
-        <Logo className="px-2 py-1" />
+        <div className="flex items-center justify-between"><Logo className="px-2 py-1" /><ThemeToggle /></div>
         <nav className="mt-8 flex-1 space-y-1">
           {NAV.map((n) => (
             <Link
@@ -79,9 +84,10 @@ function DashboardLayout() {
         {/* Mobile top bar */}
         <div className="glass mb-5 flex items-center justify-between rounded-full px-4 py-2.5 lg:hidden">
           <Logo />
+          <div className="flex items-center gap-2"><ThemeToggle />
           <button onClick={logout} aria-label="Cerrar sesión" className="grid h-9 w-9 place-items-center rounded-full glass">
             <LogOut className="h-4 w-4" />
-          </button>
+          </button></div>
         </div>
         <main key={typeof window !== "undefined" ? window.location.pathname : ""} className="page-enter">
           <Outlet />
