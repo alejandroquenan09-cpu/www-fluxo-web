@@ -70,11 +70,7 @@ function Home() {
 
       {/* Concept */}
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <Reveal className="glass sheen mx-auto max-w-3xl rounded-[2rem] p-8 text-center sm:p-12">
-          <p className="font-display text-2xl leading-snug sm:text-3xl">
-      
-          </p>
-        </Reveal>
+       
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {PILLARS.map((p, i) => (
             <Reveal key={p.title} delay={i * 100} className="glass rounded-3xl p-6">
