@@ -21,8 +21,8 @@ export const Route = createFileRoute("/")({
 });
 
 const PILLARS = [
-  { icon: RefreshCw, title: "En evolución", text: "Fluxo se actualiza al ritmo de la tecnología." },
-  { icon: Sparkles, title: "Inteligente", text: "IA integrada para pensar contigo." },
+  { icon: RefreshCw, title: "En evolución", text: "Fluxo se actualiza al ritmo de la tecnología para nunca quedarte atras." },
+  { icon: Sparkles, title: "Inteligente", text: "IA integrada para ayudarte siempre, te presentamos a Floppy." },
 ];
 
 function Home() {
@@ -99,7 +99,7 @@ function Home() {
           <div className="relative grid items-center gap-10 md:grid-cols-2">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">Floppy</p>
-              <h2 className="mt-4 text-3xl font-semibold sm:text-4xl">Una inteligencia que conversa a tu ritmo.</h2>
+              <h2 className="mt-4 text-3xl font-semibold sm:text-4xl">Una inteligencia que siempre esta para ayudarte.</h2>
               <p className="mt-4 text-muted-foreground">Pregunta, crea y resuelve. Tus conversaciones se guardan de forma privada en tu cuenta.</p>
               <Button asChild variant="flow" size="xl" className="mt-8">
                 <Link to="/ia">
@@ -109,10 +109,10 @@ function Home() {
             </div>
             <div className="space-y-3">
               <div className="ml-auto w-fit max-w-[85%] rounded-3xl rounded-br-lg bg-flow px-4 py-3 text-sm text-primary-foreground">
-                ¿Cómo organizo mi semana?
+                ayudame a solicitar un servicio
               </div>
               <div className="glass w-fit max-w-[85%] rounded-3xl rounded-bl-lg px-4 py-3 text-sm">
-                Empecemos por tus tres prioridades. Te propongo bloques de enfoque por la mañana…
+                Claro! Te dirigire al panel de servicios de fluxo.
               </div>
               <div className="glass flex w-fit gap-1.5 rounded-3xl rounded-bl-lg px-4 py-4">
                 {[0, 1, 2].map((i) => (
