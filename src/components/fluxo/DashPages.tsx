@@ -21,28 +21,48 @@ const Title = ({ children }: { children: string }) => <h1 className="mb-6 text-3
 
 export function DashHome() {
   const { user, acc, usage } = useAccount();
-  const plan = acc?.subscription?.plan_id === "premium" ? "Premium" : "Gratis";
   const limit = (acc?.subscription?.plans as { ai_daily_limit: number } | null)?.ai_daily_limit ?? 20;
+
   return (
     <div>
-      <Title>{`Hola, bienvenido de nuevo ${acc?.profile?.full_name || "bienvenido"}`}</Title>
-      <div className="grid gap-4 sm:grid-cols-3">
-        <div className="glass rounded-3xl p-6"><p className="text-sm text-muted-foreground">Correo</p><p className="mt-2 truncate">{user.email}</p></div>
-        
-        <div className="glass rounded-3xl p-6"><p className="text-sm text-muted-foreground">Uso de IA hoy</p><p className="mt-2 font-display text-2xl">{usage?.today ?? 0} / {limit}</p><p className="text-xs text-muted-foreground">{usage?.conversations ?? 0} conversaciones</p></div>
-      </div>
-      <div className="mt-6 flex flex-wrap gap-3">
-  <Button asChild variant="flow" size="xl">
-    <Link to="/dashboard/ia">Consultar a Floppy</Link>
-  </Button>
-  <Button asChild variant="glass" size="xl">
-    <Link to="/servicios">Explorar los servicios de Fluxo </Link>
-  </Button>
-</div>
+      <Title>{`Hola, bienvenido de nuevo ${acc?.profile?.full_name || ""}`}</Title>
 
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Panel grande ahora dedicado a los servicios */}
+        <div className="glass flex flex-col justify-between rounded-3xl p-6">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary">Catálogo</p>
+            <h3 className="mt-1 font-display text-xl font-semibold">Servicios de Fluxo</h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Mantenimiento, redes, desarrollo web y soluciones digitales.
+            </p>
+          </div>
+          <Button asChild variant="flow" size="default" className="mt-5 w-fit">
+            <Link to="/servicios">Explorar los servicios de Fluxo</Link>
+          </Button>
+        </div>
+
+        {/* Panel de uso de Floppy */}
+        <div className="glass rounded-3xl p-6">
+          <p className="text-xs font-semibold uppercase tracking-wider text-primary">Floppy IA hoy</p>
+          <p className="mt-2 font-display text-2xl font-bold">{usage?.today ?? 0} / {limit}</p>
+          <p className="text-xs text-muted-foreground">{usage?.conversations ?? 0} conversaciones iniciadas</p>
+        </div>
+      </div>
+
+      {/* Botones inferiores: ahora con tu correo donde antes estaba el botón */}
+      <div className="mt-6 flex flex-wrap items-center gap-3">
+        <Button asChild variant="flow" size="xl">
+          <Link to="/dashboard/ia">Consultar a Floppy</Link>
+        </Button>
+        <div className="glass flex items-center rounded-2xl px-5 py-3 text-sm text-muted-foreground">
+          <span>Cuenta: <strong className="font-medium text-foreground">{user.email}</strong></span>
+        </div>
+      </div>
     </div>
   );
 }
+
 
 export const DashIA = () => (<div><Title>Floppy</Title><ChatPanel /></div>);
 export const DashServicios = () => (<div><Title>Servicios</Title><ServicesGrid /></div>);
