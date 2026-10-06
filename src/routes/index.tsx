@@ -102,12 +102,12 @@ function Home() {
           <div aria-hidden className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
           <div className="relative grid items-center gap-10 md:grid-cols-2">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">Fluxo IA</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">Floppy</p>
               <h2 className="mt-4 text-3xl font-semibold sm:text-4xl">Una inteligencia que conversa a tu ritmo.</h2>
               <p className="mt-4 text-muted-foreground">Pregunta, crea y resuelve. Tus conversaciones se guardan de forma privada en tu cuenta.</p>
               <Button asChild variant="flow" size="xl" className="mt-8">
                 <Link to="/ia">
-                  Probar Fluxo IA <ArrowRight />
+                  Probar Floppy <ArrowRight />
                 </Link>
               </Button>
             </div>

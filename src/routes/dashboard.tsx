@@ -22,7 +22,7 @@ export const Route = createFileRoute("/dashboard")({
 
 const NAV = [
   { to: "/dashboard", label: "Inicio", icon: Home },
-  { to: "/dashboard/ia", label: "IA", icon: Sparkles },
+  { to: "/dashboard/ia", label: "Floppy", icon: Sparkles },
   { to: "/dashboard/servicios", label: "Servicios", icon: LayoutGrid },
   { to: "/dashboard/reservas", label: "Reservas", icon: CalendarCheck },
   { to: "/dashboard/suscripcion", label: "Suscripción", icon: CreditCard },
