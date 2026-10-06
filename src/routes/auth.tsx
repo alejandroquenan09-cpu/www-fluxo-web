@@ -15,6 +15,8 @@ export const Route = createFileRoute("/auth")({
   validateSearch: search,
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Accede a Fluxo" },
       { name: "description", content: "Inicia sesión o crea tu cuenta en Fluxo." },
       { property: "og:title", content: "Accede a Fluxo" },

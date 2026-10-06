@@ -9,6 +9,8 @@ import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/ia")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Floppy — Inteligencia que fluye" },
       { name: "description", content: "Conversa con Floppy: un asistente privado, rápido y elegante." },
       { property: "og:title", content: "Floppy — Inteligencia que fluye" },

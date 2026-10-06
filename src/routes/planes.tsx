@@ -6,6 +6,8 @@ import { Reveal } from "@/components/fluxo/Reveal";
 export const Route = createFileRoute("/planes")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Planes — Fluxo" },
       { name: "description", content: "Plan Gratis y Premium de Fluxo. Empieza sin costo y amplía cuando quieras." },
       { property: "og:title", content: "Planes — Fluxo" },

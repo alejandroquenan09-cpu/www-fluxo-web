@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { cop } from "@/components/fluxo/ServiceCard";
 
 export const Route = createFileRoute("/dashboard/reservas")({
-  head: () => ({ meta: [{ title: "Reservas — Fluxo" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Reservas — Fluxo" }, { name: "description", content: "Consulta y gestiona tus reservas de servicios en Fluxo." }, { property: "og:title", content: "Reservas — Fluxo" }, { property: "og:description", content: "Consulta y gestiona tus reservas de servicios en Fluxo." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }, { name: "robots", content: "noindex" }] }),
   component: Reservas,
 });
 

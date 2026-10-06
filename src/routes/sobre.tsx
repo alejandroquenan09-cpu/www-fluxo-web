@@ -5,6 +5,8 @@ import { Reveal } from "@/components/fluxo/Reveal";
 export const Route = createFileRoute("/sobre")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Sobre Fluxo — Un flujo que nunca se detiene" },
       { name: "description", content: "La historia y la idea detrás de Fluxo: tecnología que evoluciona como el agua." },
       { property: "og:title", content: "Sobre Fluxo" },
