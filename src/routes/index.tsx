@@ -72,7 +72,7 @@ function Home() {
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <Reveal className="glass sheen mx-auto max-w-3xl rounded-[2rem] p-8 text-center sm:p-12">
           <p className="font-display text-2xl leading-snug sm:text-3xl">
-            Como el agua, la tecnología <span className="text-flow">nunca se detiene</span>. Fluxo avanza con ella para que nunca te quedes atrás.
+      
           </p>
         </Reveal>
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -83,7 +83,7 @@ function Home() {
               <p className="mt-1 text-sm text-muted-foreground">{p.text}</p>
             </Reveal>
           ))}
-        </div>
+        </div>  
       </section>
 
       {/* Services */}
