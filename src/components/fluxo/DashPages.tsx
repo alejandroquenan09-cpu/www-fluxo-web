@@ -33,7 +33,7 @@ export function DashHome() {
       </div>
       <div className="mt-6 flex flex-wrap gap-3">
   <Button asChild variant="flow" size="xl">
-    <Link to="/dashboard/ia">Abrir Fluxo IA</Link>
+    <Link to="/dashboard/ia">Abrir Floppy</Link>
   </Button>
   <Button asChild variant="glass" size="xl">
     <Link to="/servicios">Explorar servicios</Link>
@@ -44,7 +44,7 @@ export function DashHome() {
   );
 }
 
-export const DashIA = () => (<div><Title>Fluxo IA</Title><ChatPanel /></div>);
+export const DashIA = () => (<div><Title>Floppy</Title><ChatPanel /></div>);
 export const DashServicios = () => (<div><Title>Servicios</Title><ServicesGrid /></div>);
 
 export function DashSuscripcion() {

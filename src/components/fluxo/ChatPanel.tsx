@@ -128,7 +128,7 @@ export function ChatPanel({ compact = false }: { compact?: boolean }) {
               <Sparkles className="h-4 w-4" />
             </span>
             <div>
-              <p className="text-sm font-semibold">Fluxo IA</p>
+              <p className="text-sm font-semibold">Floppy</p>
               <p className="text-xs text-muted-foreground">{mock ? "Modo demostración" : "En línea"}</p>
             </div>
           </div>
@@ -180,7 +180,7 @@ export function ChatPanel({ compact = false }: { compact?: boolean }) {
             );
           })}
           {typing && (
-            <div className="flex animate-fade-in justify-start" aria-label="Fluxo IA está escribiendo">
+            <div className="flex animate-fade-in justify-start" aria-label="Floppy está escribiendo">
               <div className="glass-strong flex gap-1.5 rounded-3xl rounded-bl-lg px-4 py-4">
                 {[0, 1, 2].map((i) => (
                   <span key={i} className="animate-typing h-1.5 w-1.5 rounded-full bg-primary" style={{ animationDelay: `${i * 0.15}s` }} />

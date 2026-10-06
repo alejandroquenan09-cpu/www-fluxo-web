@@ -18,7 +18,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
           className="glass flex items-center gap-2 rounded-full px-4 py-2.5 text-xs sm:text-sm font-medium shadow-xl hover:border-primary/50 transition-all backdrop-blur-md"
         >
           <Sparkles className="h-4 w-4 text-cyan-400 animate-pulse" />
-          <span>Fluxo IA</span>
+          <span>Floppy</span>
         </Link>
         <Link
           to="/dashboard"
