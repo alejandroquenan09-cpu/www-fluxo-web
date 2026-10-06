@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { createFileRoute, Link, Outlet, useNavigate } from "@tanstack/react-router";
-import { CalendarCheck, CreditCard, Home, LayoutGrid, LogOut, Settings, Sparkles, User } from "lucide-react";
+import { CalendarCheck, Home, LayoutGrid, LogOut, Settings, Sparkles, User } from "lucide-react";
 import { useAuth, signOut } from "@/lib/auth";
 import { Logo } from "@/components/fluxo/Logo";
 import { ThemeToggle } from "@/components/fluxo/ThemeToggle";
@@ -25,7 +25,7 @@ const NAV = [
   { to: "/dashboard/ia", label: "Floppy", icon: Sparkles },
   { to: "/dashboard/servicios", label: "Servicios", icon: LayoutGrid },
   { to: "/dashboard/reservas", label: "Reservas", icon: CalendarCheck },
-  { to: "/dashboard/suscripcion", label: "Suscripción", icon: CreditCard },
+  
   { to: "/dashboard/perfil", label: "Perfil", icon: User },
   { to: "/dashboard/configuracion", label: "Configuración", icon: Settings },
 ] as const;
