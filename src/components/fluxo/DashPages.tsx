@@ -91,7 +91,7 @@ export function DashSuscripcion() {
 export function DashPerfil() {
   const { user, acc } = useAccount();
   return (
-    <div><Title>Perfil</Title>
+    <div><Title>Tu Perfil</Title>
       <div className="glass space-y-3 rounded-3xl p-6">
         <p><span className="text-muted-foreground">Nombre: </span>{acc?.profile?.full_name || "—"}</p>
         <p><span className="text-muted-foreground">Correo: </span>{user.email}</p>
