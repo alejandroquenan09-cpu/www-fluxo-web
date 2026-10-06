@@ -33,10 +33,10 @@ export function DashHome() {
       </div>
       <div className="mt-6 flex flex-wrap gap-3">
   <Button asChild variant="flow" size="xl">
-    <Link to="/dashboard/ia">Abrir Floppy</Link>
+    <Link to="/dashboard/ia">Consultar a Floppy</Link>
   </Button>
   <Button asChild variant="glass" size="xl">
-    <Link to="/servicios">Explorar servicios</Link>
+    <Link to="/servicios">Explorar los servicios de Fluxo </Link>
   </Button>
 </div>
 
