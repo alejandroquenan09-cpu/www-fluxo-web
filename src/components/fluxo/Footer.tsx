@@ -12,7 +12,7 @@ export function Footer() {
         <div className="flex flex-wrap gap-5 text-sm text-muted-foreground">
           <Link to="/servicios" className="hover:text-foreground">Servicios</Link>
           <Link to="/ia" className="hover:text-foreground">Floppy</Link>
-          <Link to="/nuestra-esencia" className="hover:text-foreground">Nuestra Esencia</Link>
+          <Link to="/nuestra-esencia" className="hover:text-foreground">nuestra-esencia</Link>
           <Link to="/sobre" className="hover:text-foreground">Sobre Fluxo</Link>
         </div>
       </div>
