@@ -62,7 +62,7 @@ function Home() {
               </Link>
             </Button>
             <Button asChild variant="glass" size="xl">
-              <Link to="/servicios">Explorar Fluxo</Link>
+              <Link to="/servicios">Servicios de Fluxo</Link>
             </Button>
           </div>
       </div>
