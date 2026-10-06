@@ -1,19 +1,19 @@
 import clearWater from "@/assets/clear-water.jpg";
 
-/** Slow-moving abstract liquid shapes behind everything. */
+/** Slowly rising, gently morphing water bubbles behind the interface. */
 const BUBBLES = [
-  { size: 10, left: 6, delay: 0, duration: 26, drift: 18, opacity: 0.55 },
-  { size: 16, left: 14, delay: -6, duration: 34, drift: -22, opacity: 0.4 },
-  { size: 7, left: 23, delay: -14, duration: 24, drift: 12, opacity: 0.6 },
-  { size: 22, left: 31, delay: -20, duration: 40, drift: -16, opacity: 0.35 },
-  { size: 12, left: 39, delay: -3, duration: 30, drift: 20, opacity: 0.5 },
-  { size: 8, left: 47, delay: -11, duration: 22, drift: -14, opacity: 0.6 },
-  { size: 26, left: 55, delay: -24, duration: 44, drift: 24, opacity: 0.3 },
-  { size: 10, left: 63, delay: -8, duration: 27, drift: -18, opacity: 0.55 },
-  { size: 15, left: 71, delay: -17, duration: 33, drift: 14, opacity: 0.4 },
-  { size: 7, left: 79, delay: -2, duration: 21, drift: -12, opacity: 0.65 },
-  { size: 18, left: 86, delay: -13, duration: 37, drift: 20, opacity: 0.35 },
-  { size: 11, left: 93, delay: -9, duration: 29, drift: -20, opacity: 0.5 },
+  { size: 68, left: 5, delay: -12, duration: 32, drift: 48, opacity: 0.65 },
+  { size: 38, left: 14, delay: -26, duration: 40, drift: -30, opacity: 0.7 },
+  { size: 88, left: 24, delay: -8, duration: 46, drift: 60, opacity: 0.5 },
+  { size: 46, left: 33, delay: -32, duration: 38, drift: -42, opacity: 0.65 },
+  { size: 28, left: 42, delay: -16, duration: 30, drift: 28, opacity: 0.75 },
+  { size: 104, left: 51, delay: -28, duration: 52, drift: -55, opacity: 0.45 },
+  { size: 36, left: 62, delay: -6, duration: 34, drift: 40, opacity: 0.7 },
+  { size: 74, left: 72, delay: -36, duration: 48, drift: -48, opacity: 0.55 },
+  { size: 48, left: 82, delay: -19, duration: 36, drift: 38, opacity: 0.7 },
+  { size: 92, left: 91, delay: -9, duration: 44, drift: -60, opacity: 0.5 },
+  { size: 22, left: 19, delay: -21, duration: 28, drift: 26, opacity: 0.8 },
+  { size: 26, left: 88, delay: -25, duration: 32, drift: -28, opacity: 0.75 },
 ];
 
 export function LiquidBackground() {
@@ -24,20 +24,20 @@ export function LiquidBackground() {
       {BUBBLES.map((b, i) => (
         <span
           key={i}
-          className="bubble animate-bubble-rise absolute rounded-full"
+          className="lava-bubble-track absolute"
           style={{
-            width: b.size,
-            height: b.size,
+            width: `clamp(${Math.round(b.size * 0.6)}px, ${b.size / 10}vw, ${b.size}px)`,
+            aspectRatio: "1",
             left: `${b.left}%`,
-            bottom: "-8%",
-            animationDelay: `${b.delay}s`,
-            animationDuration: `${b.duration}s`,
-            animationIterationCount: "infinite",
-            animationTimingFunction: "linear",
+            bottom: "-120px",
+            ["--bubble-delay" as string]: `${b.delay}s`,
+            ["--bubble-duration" as string]: `${b.duration}s`,
             ["--bubble-drift" as string]: `${b.drift}px`,
             ["--bubble-opacity" as string]: b.opacity,
           }}
-        />
+        >
+          <span className="lava-bubble block h-full w-full" />
+        </span>
       ))}
     </div>
   );

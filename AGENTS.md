@@ -11,3 +11,4 @@
 
 - Use one root ThemeProvider for client-side appearance state, persistent storage and all theme controls, including notifications, so public and signed-in views stay synchronized.
 - Render the shared water image through LiquidBackground with global appearance tokens so both themes retain the same visual identity.
+- Animate background bubbles with separate CSS rise and shape layers and honor reduced motion, keeping decorative motion isolated from interactive content.
