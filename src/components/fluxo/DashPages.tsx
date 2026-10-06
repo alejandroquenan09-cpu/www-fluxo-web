@@ -25,7 +25,7 @@ export function DashHome() {
   const limit = (acc?.subscription?.plans as { ai_daily_limit: number } | null)?.ai_daily_limit ?? 20;
   return (
     <div>
-      <Title>{`Hola, ${acc?.profile?.full_name || "bienvenido"}`}</Title>
+      <Title>{`Hola,bienvenido de nuevo ${acc?.profile?.full_name || "bienvenido"}`}</Title>
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="glass rounded-3xl p-6"><p className="text-sm text-muted-foreground">Correo</p><p className="mt-2 truncate">{user.email}</p></div>
         
