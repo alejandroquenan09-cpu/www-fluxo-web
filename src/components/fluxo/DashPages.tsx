@@ -28,7 +28,7 @@ export function DashHome() {
       <Title>{`Hola, ${acc?.profile?.full_name || "bienvenido"}`}</Title>
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="glass rounded-3xl p-6"><p className="text-sm text-muted-foreground">Correo</p><p className="mt-2 truncate">{user.email}</p></div>
-        <div className="glass rounded-3xl p-6"><p className="text-sm text-muted-foreground">Plan actual</p><p className="mt-2 font-display text-2xl text-flow">{plan}</p></div>
+        
         <div className="glass rounded-3xl p-6"><p className="text-sm text-muted-foreground">Uso de IA hoy</p><p className="mt-2 font-display text-2xl">{usage?.today ?? 0} / {limit}</p><p className="text-xs text-muted-foreground">{usage?.conversations ?? 0} conversaciones</p></div>
       </div>
       <div className="mt-6 flex flex-wrap gap-3">
