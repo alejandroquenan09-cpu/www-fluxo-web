@@ -257,113 +257,7 @@ export function FloppyCompanion() {
               <Button asChild variant="flow">
                 <Link to="/auth" search={{ mode: "login" }} onClick={() => setOpen(false)}>
                   Iniciar sesión
-                </Link>
-              </Button>
-            </div>
-          )}
-
-          {!active && session && (
-            <>
-              <p className="mb-4 text-center text-xs text-muted-foreground">Usaremos tu micrófono durante la llamada.</p>
-              <Button className="w-full" variant="flow" onClick={start}>
-                <Phone />
-                Llamar a Floppy
-              </Button>
-            </>
-          )}
-
-          {active && (
-            <div className="flex justify-center gap-3">
-              <Button
-                variant="outline"
-                size="icon"
-                disabled={call.status !== "connected"}
-                onClick={() => call.setMuted(!call.muted)}
-                aria-label={call.muted ? "Activar micrófono" : "Silenciar micrófono"}
-                title={call.muted ? "Activar micrófono" : "Silenciar micrófono"}
-              >
-                {call.muted ? <MicOff /> : <Mic />}
-              </Button>
-              <Button variant="destructive" onClick={call.stop} disabled={call.status === "stopping"}>
-                <PhoneOff />
-                Finalizar
-              </Button>
-            </div>
-          )}
-
-          {call.playbackBlocked && (
-            <Button className="mt-3 w-full" onClick={call.resumePlayback}>
-              <Play />
-              Escuchar a Floppy
-            </Button>
-          )}
-
-          {call.error && <p role="alert" className="mt-3 text-sm text-destructive">{call.error}</p>}
-          {pending && <p role="status" className="mt-3 text-xs text-muted-foreground">Consultando tu solicitud…</p>}
-
-          {captions.length > 0 && (
-            <div className="mt-4 max-h-32 space-y-2 overflow-y-auto border-t border-border pt-3">
-              {captions.map((row, index) => (
-                <p key={`${row.start}-${index}`} className="text-xs leading-relaxed">
-                  <strong>{row.role}: </strong>
-                  {row.text}
-                </p>
-              ))}
-            </div>
-          )}
-
-          {seconds !== null && (
-            <p className="mt-3 text-xs text-muted-foreground">
-              Voz: {Math.ceil(seconds)} s{call.finalized === false ? " · duración final sin confirmar" : ""}
-            </p>
-          )}
-
-          <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
-            <Button asChild variant="link" className="px-0">
-              <Link to={session ? "/dashboard/ia" : "/ia"} onClick={close}>
-                <MessageCircle />
-                Abrir chat
-              </Link>
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleQuiet}
-              aria-label={quiet ? "Activar consejos" : "Silenciar consejos"}
-              title={quiet ? "Activar consejos" : "Silenciar consejos"}
-            >
-              {quiet ? <BellOff /> : <Bell />}
-            </Button>
-          </div>
-        </section>
-      )}
-
-      {tip && !open && (
-        <div
-          className="floppy-tip rounded-xl border border-border bg-popover p-3 text-popover-foreground shadow-glass"
-          style={{
-            position: "absolute",
-            left: isLeftSide ? 0 : "auto",
-            right: isLeftSide ? "auto" : 0,
-            top: isTopSide ? `${MASCOT_SIZE + 10}px` : "auto",
-            bottom: isTopSide ? "auto" : `${MASCOT_SIZE + 10}px`,
-          }}
-        >
-          <p className="pr-6 text-xs leading-relaxed">{tip}</p>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="absolute right-0 top-0 h-7 w-7"
-            aria-label="Silenciar consejos"
-            title="Silenciar consejos"
-            onClick={toggleQuiet}
-          >
-            <X />
-          </Button>
-        </div>
-      )}
-
-      <button
+                     <button
         type="button"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
@@ -371,7 +265,11 @@ export function FloppyCompanion() {
         onClick={handleMascotClick}
         aria-label={open ? "Cerrar asistente Floppy" : "Abrir asistente Floppy"}
         title="Arrastra a Floppy o haz clic para abrir"
-        className="floppy-mascot relative flex items-center justify-center rounded-full p-0 transition-transform active:scale-95 cursor-grab active:cursor-grabbing touch-none select-none drop-shadow-xl"
+        className={`floppy-mascot relative flex items-center justify-center rounded-full p-0 cursor-grab active:cursor-grabbing touch-none select-none transition-all duration-300 ease-in-out ${
+          open || active
+            ? "opacity-100 drop-shadow-xl scale-100"
+            : "opacity-40 hover:opacity-100 focus-visible:opacity-100 active:opacity-100 drop-shadow-sm hover:drop-shadow-xl hover:scale-105 active:scale-95"
+        }`}
         style={{
           width: `${MASCOT_SIZE}px`,
           height: `${MASCOT_SIZE}px`,
@@ -384,6 +282,3 @@ export function FloppyCompanion() {
           draggable={false}
         />
       </button>
-    </aside>
-  );
-}
