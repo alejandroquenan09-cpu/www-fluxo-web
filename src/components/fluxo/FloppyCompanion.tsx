@@ -24,7 +24,7 @@ const destinations = new Set([
   "/dashboard/configuracion",
 ]);
 
-const MASCOT_SIZE = 112; // Tamaño más grande en px (112x112)
+const MASCOT_SIZE = 112; // 200x200 px
 
 export function FloppyCompanion() {
   const { session } = useAuth();
@@ -37,17 +37,16 @@ export function FloppyCompanion() {
   const [seconds, setSeconds] = useState<number | null>(null);
   const [pending, setPending] = useState(false);
 
-  // Posición arrastrable de Floppy
+  // Posición arrastrable
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef<{ x: number; y: number; posX: number; posY: number }>({ x: 0, y: 0, posX: 0, posY: 0 });
   const hasMovedRef = useRef(false);
 
-  // Inicializar posición en la esquina inferior derecha
   useEffect(() => {
     if (typeof window === "undefined") return;
     const initialX = Math.max(16, window.innerWidth - MASCOT_SIZE - 20);
-    const initialY = Math.max(16, window.innerHeight - MASCOT_SIZE - (window.innerWidth < 1024 ? 90 : 30));
+    const initialY = Math.max(16, window.innerHeight - MASCOT_SIZE - (window.innerWidth < 1024 ? 95 : 35));
     setPosition({ x: initialX, y: initialY });
 
     const handleResize = () => {
@@ -136,7 +135,6 @@ export function FloppyCompanion() {
     call.start();
   };
 
-  // Manejo de arrastre con pointer events (touch y mouse)
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (!position) return;
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
@@ -176,22 +174,28 @@ export function FloppyCompanion() {
     try {
       (e.target as HTMLElement).releasePointerCapture(e.pointerId);
     } catch {
-      // Ignorar si el puntero ya se liberó
+      // Ignorar si el puntero se liberó
     }
     isDraggingRef.current = false;
   };
 
   const handleMascotClick = () => {
-    // Si se arrastró, no abrir ni cerrar el modal
     if (hasMovedRef.current) return;
     setOpen(!open);
     setTip(null);
     if (open) call.stop();
   };
 
-  // Calcular orientación del menú según dónde esté Floppy en pantalla
+  // Saber en qué cuadrante de la pantalla está para orientar la ventana
   const isLeftSide = position ? position.x < window.innerWidth / 2 : false;
   const isTopSide = position ? position.y < window.innerHeight / 2 : false;
+
+  // Calcular espacio máximo disponible en vertical
+  const availableHeight = position
+    ? isTopSide
+      ? Math.max(260, window.innerHeight - (position.y + MASCOT_SIZE + 30))
+      : Math.max(260, position.y - 30)
+    : 440;
 
   return (
     <aside
@@ -216,8 +220,13 @@ export function FloppyCompanion() {
           aria-label="Llamada con Floppy"
           style={{
             position: "absolute",
-            [isLeftSide ? "left" : "right"]: 0,
-            [isTopSide ? "top" : "bottom"]: `${MASCOT_SIZE + 10}px`,
+            left: isLeftSide ? 0 : "auto",
+            right: isLeftSide ? "auto" : 0,
+            top: isTopSide ? `${MASCOT_SIZE + 10}px` : "auto",
+            bottom: isTopSide ? "auto" : `${MASCOT_SIZE + 10}px`,
+            maxHeight: `${availableHeight}px`,
+            paddingBottom: "1.25rem", // Elimina el padding excesivo
+            overflowY: "auto",
           }}
         >
           <header className="flex items-center justify-between">
@@ -240,7 +249,7 @@ export function FloppyCompanion() {
             </Button>
           </header>
 
-          <img src={mascot.url} alt="Floppy, mascota acuática de Fluxo" className="mx-auto h-28 w-28 object-contain" />
+          <img src={mascot.url} alt="Floppy, mascota acuática de Fluxo" className="mx-auto h-24 w-24 object-contain my-1" />
 
           {!active && !session && (
             <div className="text-center">
@@ -334,8 +343,10 @@ export function FloppyCompanion() {
           className="floppy-tip rounded-xl border border-border bg-popover p-3 text-popover-foreground shadow-glass"
           style={{
             position: "absolute",
-            [isLeftSide ? "left" : "right"]: 0,
-            [isTopSide ? "top" : "bottom"]: `${MASCOT_SIZE + 10}px`,
+            left: isLeftSide ? 0 : "auto",
+            right: isLeftSide ? "auto" : 0,
+            top: isTopSide ? `${MASCOT_SIZE + 10}px` : "auto",
+            bottom: isTopSide ? "auto" : `${MASCOT_SIZE + 10}px`,
           }}
         >
           <p className="pr-6 text-xs leading-relaxed">{tip}</p>
