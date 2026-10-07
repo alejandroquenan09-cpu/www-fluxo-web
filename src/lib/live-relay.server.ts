@@ -1,6 +1,7 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { stepCountIs, streamText, tool, type ModelMessage } from "ai";
 import process from "node:process";
+import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
 export type LiveConfig = {
@@ -12,7 +13,7 @@ export type LiveConfig = {
 };
 
 // Fill from co-loaded knowledge: the gateway URL, the Live model and the resolved chat model.
-const liveSettings = { baseURL: "", liveModel: "", backendModel: "" };
+const liveSettings = { baseURL: "https://ai.gateway.lovable.dev/v1", liveModel: "openai/gpt-live-1", backendModel: "openai/gpt-6-astra", openingInstructions: "Saluda en español: Hola, soy Floppy, tu asistente de Fluxo. ¿Qué necesitas hoy? Después escucha." };
 
 export type LiveSocket = {
   readonly readyState: number;
@@ -111,36 +112,17 @@ export function handleLiveRequest(request: Request): Response {
   return new Response(null, response);
 }
 
-const conversationInstructions = `You are Mira, a calm learning companion.
-Speak naturally in brief replies. Ask a focused question when details are unclear.
-Backchannel policy: Use moderate listening sounds without taking over.
-Interruption policy: Stop your answer and listen when the user interrupts.
+const conversationInstructions = `Eres Floppy, el asistente cercano de Fluxo. Habla en español con respuestas breves, naturales y amables. Ayuda con servicios tecnológicos y navegación por Fluxo. No hay planes Premium.
+Backchannel policy: Usa sonidos de escucha moderados sin tomar la palabra.
+Interruption policy: Detén tu respuesta y escucha si te interrumpen; conserva la tarea y procesa las correcciones.
 Delegation policy:
-Backend tools: Reason through questions and plan study sessions across days.
-Delegate to the backend when: The user wants a study schedule or careful reasoning,
-or a correction changes a question already being worked on.
-Do not delegate to the backend when: Greeting, clarifying a question, or repeating
-a still-current answer. Wait for the backend result before presenting its answer.`;
+Backend tools: Consultar el catálogo real y preparar navegación a secciones o formularios de servicios.
+Delegate to the backend when: El usuario pide ir a una sección, abrir un servicio o reservar, necesita recomendaciones del catálogo o corrige un destino.
+Do not delegate to the backend when: Saludos, aclaraciones, charla breve o repetir una respuesta vigente.
+Espera el resultado verificado antes de indicar el destino. Solo abres formularios: nunca afirmes haber creado o pagado una reserva.`;
 
-const studyScheduleInput = z
-  .object({
-    total_minutes: z.number().int().min(1).max(10_080),
-    days: z.number().int().min(1).max(30),
-  })
-  .strict();
-
-function planStudySchedule(args: z.infer<typeof studyScheduleInput>) {
-  const daily = Math.floor(args.total_minutes / args.days);
-  return {
-    total_minutes: args.total_minutes,
-    days: args.days,
-    sessions: Array.from({ length: args.days }, (_, index) => ({
-      day: index + 1,
-      minutes: daily + (index < args.total_minutes % args.days ? 1 : 0),
-    })),
-  };
-}
-
+const navigationInput = z.object({ path: z.enum(["/", "/servicios", "/ia", "/nuestra-esencia", "/sobre", "/dashboard", "/dashboard/reservas", "/dashboard/perfil", "/dashboard/configuracion"]), service_slug: z.string().nullable(), reserve: z.boolean() }).strict();
+type NavigationPlan = { href: string; label: string };
 function isListeningSound(text: string) {
   const normalized = text.toLowerCase().replace(/[\s\p{Pd}]/gu, "");
   return /^(?:m+hm+|uhhuh)[.,!]*$/.test(normalized);
@@ -152,7 +134,8 @@ async function answerQuestion(
   correlation: { runID: string; sessionID: string | undefined; delegationID: string },
   signal: AbortSignal,
   consumeInput: () => void,
-  onPlan: (plan: ReturnType<typeof planStudySchedule>) => void,
+  catalog: Array<{ slug: string; name: string; description: string }>,
+  onPlan: (plan: NavigationPlan) => void,
 ) {
   signal.throwIfAborted();
   const provider = createOpenAI({
@@ -199,24 +182,23 @@ async function answerQuestion(
           : {}),
       },
     },
-    system:
-      "Help a spoken learning companion answer the latest user question. " +
-      "Transcripts may be incomplete or corrected. Use the latest correction. " +
-      "Continue from completed tool results; do not repeat completed actions. " +
-      "Return verified facts and useful next steps in at most 150 words. " +
-      "To display a study schedule for the current request, call plan_study_schedule with its total minutes and days. " +
-      "Ask for missing details instead of guessing. The tool only calculates a draft plan; " +
-      "it does not save calendar events. You have no other tools.",
+    system: "Eres el asistente de voz Floppy de Fluxo. Responde en español, máximo 100 palabras. " +
+      "Usa la última corrección, no repitas acciones. Para solicitudes de navegación usa navigate_fluxo. " +
+      "No reserves ni cobres: solo abre el formulario y el usuario lo confirma allí. No hay suscripciones. " +
+      "Catálogo real: " + JSON.stringify(catalog),
     messages,
     tools: {
-      plan_study_schedule: tool({
-        description: "Distribute a total study time evenly across days and return a draft schedule.",
-        inputSchema: studyScheduleInput,
+      navigate_fluxo: tool({
+        description: "Preparar navegación solicitada a una sección existente de Fluxo o a un servicio del catálogo. No crea reservas.",
+        inputSchema: navigationInput,
         execute: async (args) => {
           signal.throwIfAborted();
-          const plan = planStudySchedule(args);
+          const service = args.service_slug ? catalog.find(s => s.slug === args.service_slug) : undefined;
+          if (args.service_slug && !service) return { error: "Servicio no encontrado; pide aclaración." };
+          const href = service ? `/servicios?servicio=${encodeURIComponent(service.slug)}${args.reserve ? "&reservar=1" : ""}` : args.path;
+          const plan = { href, label: service?.name ?? args.path };
           onPlan(plan);
-          return plan;
+          return { ...plan, status: "Destino listo para abrir; no se ha creado una reserva." };
         },
       }),
     },
@@ -279,13 +261,14 @@ export function bindLiveConnection(
   let gateway: LiveSocket | undefined;
   let sessionID: string | undefined;
   let starting = false;
+  let catalog: Array<{ slug: string; name: string; description: string }> = [];
   let closing = false;
   let finished = false;
   let revision = 0;
   let task: AbortController | undefined;
   const pendingDelegations: Array<{
     event: ProviderEvent;
-    plan?: ReturnType<typeof planStudySchedule>;
+    plan?: NavigationPlan;
   }> = [];
   let completedDelegation: (typeof pendingDelegations)[number] | undefined;
   const backendMessages: ModelMessage[] = [];
@@ -406,7 +389,7 @@ export function bindLiveConnection(
     restartTimer = setTimeout(() => void runDelegation(), 300);
   }
 
-  function deliverResult(delegationID: string, answer: string, plan?: ReturnType<typeof planStudySchedule>) {
+  function deliverResult(delegationID: string, answer: string, plan?: NavigationPlan) {
     if (closing) return;
     if (gateway?.readyState !== 1) return stop();
     try {
@@ -420,7 +403,7 @@ export function bindLiveConnection(
           }),
         );
       }
-      if (plan) emit({ type: "app.study_schedule.plan", delegation_id: delegationID, plan });
+      if (plan) emit({ type: "app.navigation", delegation_id: delegationID, plan });
       completedDelegation = pendingDelegations.shift();
     } catch {
       stop();
@@ -449,6 +432,7 @@ export function bindLiveConnection(
           transcriptCursor = transcripts.length;
           taskRevision = revision;
         },
+        catalog,
         (plan) => {
           pending.plan = plan;
         },
@@ -456,8 +440,11 @@ export function bindLiveConnection(
       if (closing || controller.signal.aborted) return;
       if (taskRevision !== revision) return;
       deliverResult(id, answer.trim(), pending.plan);
-    } catch {
+    } catch (error) {
       if (closing || controller.signal.aborted) return;
+      emit({ type: "app.error", error: { message: error instanceof Error ? error.message : "No se pudo completar la solicitud." } });
+      stop();
+      return;
       backendMessages.push({
         role: "assistant",
         content:
@@ -563,9 +550,18 @@ export function bindLiveConnection(
     }
   }
 
-  async function startSession(sdp: string) {
+  async function startSession(sdp: string, token: string) {
     if (closing || browser.readyState !== 1) return;
     clearTimeout(startTimer);
+    const url = process.env["SUPABASE_URL"] ?? process.env["VITE_SUPABASE_URL"];
+    const key = process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
+    if (!url || !key || !token) throw new Error("Inicia sesión para hablar con Floppy.");
+    const client = createClient(url, key, { auth: { persistSession: false }, global: { headers: { Authorization: `Bearer ${token}` } } });
+    const { data: auth, error: authError } = await client.auth.getUser(token);
+    if (authError || !auth.user) throw new Error("Tu sesión expiró. Inicia sesión para continuar.");
+    const { data: services, error: catalogError } = await client.from("services").select("slug,name,description");
+    if (catalogError) throw new Error("No se pudo consultar el catálogo de Fluxo.");
+    catalog = services ?? [];
     startupTimer = setTimeout(() => {
       emit({ type: "app.error", error: { message: "Voice startup timed out" } });
       stop();
@@ -616,7 +612,7 @@ export function bindLiveConnection(
         }
         starting = true;
         execution.waitUntil(
-          startSession(event.sdp).catch((error) => {
+          startSession(event.sdp, typeof event.token === "string" ? event.token : "").catch((error) => {
             if (!closing)
               emit({
                 type: "app.error",
