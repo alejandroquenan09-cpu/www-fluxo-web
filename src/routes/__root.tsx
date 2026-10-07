@@ -16,6 +16,7 @@ import { AuthProvider } from "@/lib/auth";
 import { Toaster } from "@/components/ui/sonner";
 import { LiquidBackground } from "@/components/fluxo/LiquidBackground";
 import { ThemeProvider, useTheme } from "@/lib/theme";
+import { FloppyCompanion } from "@/components/fluxo/FloppyCompanion";
 
 function NotFoundComponent() {
   return (
@@ -115,6 +116,7 @@ function RootComponent() {
       <AuthProvider>
         <LiquidBackground />
         <Outlet />
+        <FloppyCompanion />
         <ThemedToaster />
       </AuthProvider>
       </ThemeProvider>

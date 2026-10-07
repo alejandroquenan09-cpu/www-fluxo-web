@@ -13,7 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IaRouteImport } from './routes/ia'
-import { Route as PlanesRouteImport } from './routes/planes'
+import { Route as NuestraEsenciaRouteImport } from './routes/nuestra-esencia'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ServiciosRouteImport } from './routes/servicios'
 import { Route as SobreRouteImport } from './routes/sobre'
@@ -46,9 +46,9 @@ const IaRoute = IaRouteImport.update({
   path: '/ia',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PlanesRoute = PlanesRouteImport.update({
-  id: '/planes',
-  path: '/planes',
+const NuestraEsenciaRoute = NuestraEsenciaRouteImport.update({
+  id: '/nuestra-esencia',
+  path: '/nuestra-esencia',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -112,7 +112,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/ia': typeof IaRoute
-  '/planes': typeof PlanesRoute
+  '/nuestra-esencia': typeof NuestraEsenciaRoute
   '/reset-password': typeof ResetPasswordRoute
   '/servicios': typeof ServiciosRoute
   '/sobre': typeof SobreRoute
@@ -129,7 +129,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/ia': typeof IaRoute
-  '/planes': typeof PlanesRoute
+  '/nuestra-esencia': typeof NuestraEsenciaRoute
   '/reset-password': typeof ResetPasswordRoute
   '/servicios': typeof ServiciosRoute
   '/sobre': typeof SobreRoute
@@ -148,7 +148,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/ia': typeof IaRoute
-  '/planes': typeof PlanesRoute
+  '/nuestra-esencia': typeof NuestraEsenciaRoute
   '/reset-password': typeof ResetPasswordRoute
   '/servicios': typeof ServiciosRoute
   '/sobre': typeof SobreRoute
@@ -168,7 +168,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/ia'
-    | '/planes'
+    | '/nuestra-esencia'
     | '/reset-password'
     | '/servicios'
     | '/sobre'
@@ -185,7 +185,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/ia'
-    | '/planes'
+    | '/nuestra-esencia'
     | '/reset-password'
     | '/servicios'
     | '/sobre'
@@ -203,7 +203,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/dashboard'
     | '/ia'
-    | '/planes'
+    | '/nuestra-esencia'
     | '/reset-password'
     | '/servicios'
     | '/sobre'
@@ -222,7 +222,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   IaRoute: typeof IaRoute
-  PlanesRoute: typeof PlanesRoute
+  NuestraEsenciaRoute: typeof NuestraEsenciaRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ServiciosRoute: typeof ServiciosRoute
   SobreRoute: typeof SobreRoute
@@ -259,11 +259,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/planes': {
-      id: '/planes'
-      path: '/planes'
-      fullPath: '/planes'
-      preLoaderRoute: typeof PlanesRouteImport
+    '/nuestra-esencia': {
+      id: '/nuestra-esencia'
+      path: '/nuestra-esencia'
+      fullPath: '/nuestra-esencia'
+      preLoaderRoute: typeof NuestraEsenciaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -329,7 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardServiciosRouteImport
       parentRoute: typeof DashboardRoute
     }
-    
+    '/dashboard/suscripcion': {
+      id: '/dashboard/suscripcion'
+      path: '/suscripcion'
+      fullPath: '/dashboard/suscripcion'
+      preLoaderRoute: typeof DashboardSuscripcionRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/api/public/stripe-webhook': {
       id: '/api/public/stripe-webhook'
       path: '/api/public/stripe-webhook'
@@ -369,7 +375,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DashboardRoute: DashboardRouteWithChildren,
   IaRoute: IaRoute,
-  PlanesRoute: PlanesRoute,
+  NuestraEsenciaRoute: NuestraEsenciaRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ServiciosRoute: ServiciosRoute,
   SobreRoute: SobreRoute,

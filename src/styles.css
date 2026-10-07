@@ -326,6 +326,18 @@
 }
 
 .water-texture { opacity: var(--water-opacity); }
+.floppy-companion { position: fixed; right: 8px; bottom: 90px; z-index: 45; display: flex; flex-direction: column; align-items: flex-end; width: 80px; }
+.floppy-call { position: absolute; right: 0; bottom: 92px; width: min(350px, calc(100vw - 24px)); max-height: calc(100dvh - 210px); overflow-y: auto; }
+.floppy-companion > audio:not(.hidden) { position: absolute; right: 0; bottom: 96px; z-index: 1; width: min(310px, calc(100vw - 64px)); transform: translateY(-4px); }
+.floppy-call { padding-bottom: 70px; }
+.floppy-tip { position: absolute; right: 0; bottom: 92px; width: 230px; }
+.floppy-mascot { animation: float-y 7s ease-in-out infinite; }
+.floppy-mascot:hover, .floppy-mascot:focus-visible { animation-play-state: paused; }
+body { padding-bottom: 170px; }
+@media (min-width: 1024px) {
+  body { padding-right: 96px; padding-bottom: 0; }
+  .floppy-companion { bottom: 24px; }
+}
 .water-veil { background: var(--water-veil); }
 
 .lava-bubble-track {
