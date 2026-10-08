@@ -158,14 +158,13 @@ export function FloppyCompanion() {
     };
   }, [quiet, active, pathname]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (call.status === "connecting") {
       say("Conectando… ⚡", 2500);
     } else if (call.status === "connected") {
       say(first ? null : "¡Listo! Te escucho… 🎙️", 3000);
     }
   }, [call.status, first]);
-
 
   const onDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (!pos) return;
@@ -208,7 +207,7 @@ export function FloppyCompanion() {
     }
   };
 
-    const onClick = (e: React.MouseEvent) => {
+  const onClick = (e: React.MouseEvent) => {
     if (drag.current.moved) return;
     setBoing(true);
     setTimeout(() => setBoing(false), 450);
@@ -231,23 +230,6 @@ export function FloppyCompanion() {
       return;
     }
     say("Conectando… ⚡", 2500);
-    call.start();
-  };
-
-    if (active) {
-      call.stop();
-      say(null);
-      scheduleReturnHome(2000);
-      return;
-    }
-        say("Conectando… ⚡", 2500);
-    call.start();
-
-      say("Inicia sesión para hablar conmigo.", 4500);
-      router.navigate({ to: "/auth", search: { mode: "login" } as never });
-      return;
-    }
-    say(null);
     call.start();
   };
 
