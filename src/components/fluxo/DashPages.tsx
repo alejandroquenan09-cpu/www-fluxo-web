@@ -9,7 +9,6 @@ import { createPortal } from "@/lib/billing/billing.functions";
 import { Button } from "@/components/ui/button";
 import { ChatPanel } from "./ChatPanel";
 import { ServicesGrid } from "./ServicesGrid";
-import { PlansGrid } from "./PlansGrid";
 
 function useAccount() {
   const { user } = useAuth();
@@ -79,27 +78,6 @@ export function DashHome() {
 
 export const DashIA = () => (<div><Title>Floppy</Title><ChatPanel /></div>);
 export const DashServicios = () => (<div><Title>Servicios</Title><ServicesGrid /></div>);
-
-export function DashSuscripcion() {
-  const { acc } = useAccount();
-  const portal = useServerFn(createPortal);
-  const manage = async () => {
-    const r = await portal();
-    if (r.url) window.location.href = r.url; else toast.info(r.error ?? "No disponible");
-  };
-  const premium = acc?.subscription?.plan_id === "premium";
-  return (
-    <div>
-      <Title>Suscripción</Title>
-      <div className="glass mb-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl p-6">
-        <div><p className="text-sm text-muted-foreground">Estado</p><p className="font-display text-2xl text-flow">{premium ? "Premium" : "Gratis"}</p>
-          {acc?.subscription?.cancel_at_period_end && <p className="text-xs text-muted-foreground">Se cancelará al final del periodo</p>}</div>
-        {premium && <Button variant="glass" onClick={manage}>Gestionar o cancelar</Button>}
-      </div>
-      <PlansGrid currentPlan={acc?.subscription?.plan_id} />
-    </div>
-  );
-}
 
 export function DashPerfil() {
   const { user, acc } = useAccount();

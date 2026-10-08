@@ -240,7 +240,7 @@ function BookingForm({
           placeholder="Ej: Calle 45 # 12-34, Bogotá"
           className="mt-1 w-full rounded-xl border border-glass-border bg-glass px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
         />
-        {errors.location && <p className="mt-1 text-xs text-destructive">{errors.location}</p>}
+        {errors["location"] && <p className="mt-1 text-xs text-destructive">{errors["location"]}</p>}
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
@@ -253,7 +253,7 @@ function BookingForm({
             onChange={(e) => setForm({ ...form, email: e.target.value })}
             className="mt-1 w-full rounded-xl border border-glass-border bg-glass px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           />
-          {errors.email && <p className="mt-1 text-xs text-destructive">{errors.email}</p>}
+          {errors["email"] && <p className="mt-1 text-xs text-destructive">{errors["email"]}</p>}
         </div>
 
         <div>
@@ -266,7 +266,7 @@ function BookingForm({
             placeholder="300 123 4567"
             className="mt-1 w-full rounded-xl border border-glass-border bg-glass px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           />
-          {errors.phone && <p className="mt-1 text-xs text-destructive">{errors.phone}</p>}
+          {errors["phone"] && <p className="mt-1 text-xs text-destructive">{errors["phone"]}</p>}
         </div>
       </div>
 
