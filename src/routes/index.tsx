@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { SiteLayout, SectionHeader } from "@/components/fluxo/SiteLayout";
 import { Reveal } from "@/components/fluxo/Reveal";
 import { ServicesGrid } from "@/components/fluxo/ServicesGrid";
-
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,6 +26,8 @@ const PILLARS = [
 ];
 
 function Home() {
+  const { user } = useAuth();
+
   return (
     <SiteLayout>
       {/* Hero */}
@@ -56,21 +58,22 @@ function Home() {
             className="mt-10 flex animate-fade-in flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center"
             style={{ animationDelay: "320ms", animationFillMode: "both" }}
           >
-            <Button asChild variant="flow" size="xl">
-              <Link to="/auth" search={{ mode: "signup" }}>
-                Comenzar ahora <ArrowRight />
-              </Link>
-            </Button>
+            {!user && (
+              <Button asChild variant="flow" size="xl">
+                <Link to="/auth" search={{ mode: "signup" }}>
+                  Comenzar ahora <ArrowRight />
+                </Link>
+              </Button>
+            )}
             <Button asChild variant="glass" size="xl">
               <Link to="/servicios">Servicios de Fluxo</Link>
             </Button>
           </div>
-      </div>
-    </section>
+        </div>
+      </section>
 
       {/* Concept */}
       <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-       
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {PILLARS.map((p, i) => (
             <Reveal key={p.title} delay={i * 100} className="glass rounded-3xl p-6">
@@ -79,7 +82,7 @@ function Home() {
               <p className="mt-1 text-sm text-muted-foreground">{p.text}</p>
             </Reveal>
           ))}
-        </div>  
+        </div>
       </section>
 
       {/* Services */}
@@ -123,8 +126,6 @@ function Home() {
           </div>
         </Reveal>
       </section>
-
-     
     </SiteLayout>
   );
 }
