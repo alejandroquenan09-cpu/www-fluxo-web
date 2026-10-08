@@ -451,7 +451,7 @@ export function bindLiveConnection(
           "The backend attempt failed. Completed tool results remain valid; verify uncertain external actions before any retry.",
       });
       if (taskRevision !== revision) return;
-      deliverResult(id, "The backend could not finish the answer. Ask whether the user wants to try again.");
+      if (id) deliverResult(id, "The backend could not finish the answer. Ask whether the user wants to try again.");
     } finally {
       if (task === controller) task = undefined;
       scheduleDelegation();
