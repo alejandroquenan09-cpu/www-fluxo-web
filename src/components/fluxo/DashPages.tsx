@@ -1,11 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
 import { accountQuery, usageQuery } from "@/lib/account";
-import { createPortal } from "@/lib/billing/billing.functions";
 import { Button } from "@/components/ui/button";
 import { ChatPanel } from "./ChatPanel";
 import { ServicesGrid } from "./ServicesGrid";
