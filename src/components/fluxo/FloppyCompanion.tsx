@@ -13,7 +13,7 @@ const tips = [
   "Siempre estoy aqui para ayudarte.",
   "¡Tócame y dime a dónde quieres ir!",
   "Soy Floppy, te puedo ayudar?",
-  "Presioname y en un momento estare contigo navegando por Fluxo",
+  "Presioname y  estare contigo navegando por Fluxo",
 ];
 
 const destinations = new Set([
