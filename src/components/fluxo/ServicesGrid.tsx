@@ -1,38 +1,73 @@
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState, useMemo } from "react";
 import { useRouterState } from "@tanstack/react-router";
-import { servicesQuery } from "@/lib/catalog";
+import { FLUXO_SERVICES, CATEGORIES, type ServiceCategory, type ServiceItem } from "@/lib/catalog";
 import { ServiceCard } from "./ServiceCard";
 import { Reveal } from "./Reveal";
 
-const EXCLUDED_SLUGS = ["fluxo-ia", "flujo-ia", "espacio-personal"];
-
 export function ServicesGrid() {
-  const { data: services = [], isLoading } = useQuery(servicesQuery);
-  const filteredServices = services.filter((s) => !EXCLUDED_SLUGS.includes(s.slug));
+  const [selectedCategory, setSelectedCategory] = useState<"todos" | ServiceCategory>("todos");
   const href = useRouterState({ select: (s) => s.location.href });
   const [target, setTarget] = useState<{ slug: string; book: boolean; n: number } | null>(null);
 
-  // Open a service (and optionally its booking form) from ?servicio=slug&reservar=1
+  // Permite abrir un servicio por URL (ej: ?servicio=mantenimiento-preventivo&reservar=1)
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
     const slug = p.get("servicio");
-    if (slug) setTarget({ slug, book: p.get("reservar") === "1", n: Date.now() });
+    if (slug) {
+      const found = FLUXO_SERVICES.find((s) => s.slug === slug);
+      if (found) setSelectedCategory(found.category);
+      setTarget({ slug, book: p.get("reservar") === "1", n: Date.now() });
+    }
   }, [href]);
 
+  const filteredServices = useMemo(() => {
+    if (selectedCategory === "todos") return FLUXO_SERVICES;
+    return FLUXO_SERVICES.filter((s) => s.category === selectedCategory);
+  }, [selectedCategory]);
+
   return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {isLoading &&
-        [0, 1, 2].map((i) => <div key={i} className="glass h-64 animate-pulse rounded-3xl" />)}
-      {filteredServices.map((s, i) => (
-        <Reveal key={s.id} delay={i * 100} className="h-full">
-          <ServiceCard
-            service={s}
-            openSignal={target?.slug === s.slug ? target.n : undefined}
-            bookSignal={target?.slug === s.slug ? target.book : undefined}
-          />
-        </Reveal>
-      ))}
+    <div className="space-y-8">
+      {/* Selector de categorías tipo pastilla */}
+      <div className="flex flex-wrap items-center justify-center gap-2">
+        {CATEGORIES.map((cat) => {
+          const count = cat.id === "todos"
+            ? FLUXO_SERVICES.length
+            : FLUXO_SERVICES.filter((s) => s.category === cat.id).length;
+          const active = selectedCategory === cat.id;
+
+          return (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm font-medium transition-all ${
+                active
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105"
+                  : "glass text-muted-foreground hover:text-foreground hover:bg-glass-strong"
+              }`}
+            >
+              <span>{cat.label}</span>
+              <span className={`rounded-full px-1.5 py-0.5 text-[10px] ${
+                active ? "bg-primary-foreground/20 text-primary-foreground" : "bg-primary/10 text-primary"
+              }`}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Grilla con los servicios detallados */}
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {filteredServices.map((s, i) => (
+          <Reveal key={s.id} delay={(i % 6) * 60} className="h-full">
+            <ServiceCard
+              service={s}
+              openSignal={target?.slug === s.slug ? target.n : undefined}
+              bookSignal={target?.slug === s.slug ? target.book : undefined}
+            />
+          </Reveal>
+        ))}
+      </div>
     </div>
   );
 }
