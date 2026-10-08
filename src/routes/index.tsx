@@ -1,9 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, RefreshCw, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SiteLayout, SectionHeader } from "@/components/fluxo/SiteLayout";
+import { SiteLayout } from "@/components/fluxo/SiteLayout";
 import { Reveal } from "@/components/fluxo/Reveal";
-import { ServicesGrid } from "@/components/fluxo/ServicesGrid";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/")({
@@ -21,7 +20,7 @@ export const Route = createFileRoute("/")({
 });
 
 const PILLARS = [
-  { icon: RefreshCw, title: "En evolución", text: "Fluxo se actualiza al ritmo de la tecnología para nunca quedarte atras." },
+  { icon: RefreshCw, title: "En evolución", text: "Fluxo se actualiza al ritmo de la tecnología para nunca quedarte atrás." },
   { icon: Sparkles, title: "Inteligente", text: "IA integrada para ayudarte siempre, te presentamos a Floppy." },
 ];
 
@@ -99,24 +98,14 @@ function Home() {
         </div>
       </section>
 
-      {/* Services */}
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <Reveal>
-          <SectionHeader eyebrow="Servicios" title="Todo fluye en un solo lugar." />
-        </Reveal>
-        <div className="mt-12">
-          <ServicesGrid />
-        </div>
-      </section>
-
-      {/* AI teaser */}
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+      {/* Floppy AI teaser */}
+      <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
         <Reveal className="glass-strong sheen relative overflow-hidden rounded-[2rem] p-8 sm:p-14">
           <div aria-hidden className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
           <div className="relative grid items-center gap-10 md:grid-cols-2">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">Floppy</p>
-              <h2 className="mt-4 text-3xl font-semibold sm:text-4xl">Una inteligencia que siempre esta para ayudarte.</h2>
+              <h2 className="mt-4 text-3xl font-semibold sm:text-4xl">Una inteligencia que siempre está para ayudarte.</h2>
               <p className="mt-4 text-muted-foreground">Pregunta, crea y resuelve. Tus conversaciones se guardan de forma privada en tu cuenta.</p>
               <Button asChild variant="flow" size="xl" className="mt-8">
                 <Link to="/ia">
@@ -129,7 +118,7 @@ function Home() {
                 ayudame a solicitar un servicio
               </div>
               <div className="glass w-fit max-w-[85%] rounded-3xl rounded-bl-lg px-4 py-3 text-sm">
-                Claro! Te dirigire al panel de servicios de fluxo.
+                ¡Claro! Te dirigiré al catálogo de servicios de Fluxo.
               </div>
               <div className="glass flex w-fit gap-1.5 rounded-3xl rounded-bl-lg px-4 py-4">
                 {[0, 1, 2].map((i) => (
