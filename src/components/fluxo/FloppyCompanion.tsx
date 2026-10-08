@@ -257,7 +257,83 @@ export function FloppyCompanion() {
               <Button asChild variant="flow">
                 <Link to="/auth" search={{ mode: "login" }} onClick={() => setOpen(false)}>
                   Iniciar sesión
-                     <button
+                </Link>
+              </Button>
+            </div>
+          )}
+
+          {(active || session) && (
+            <div className="space-y-3">
+              {call.error && <p className="text-sm text-destructive">{call.error}</p>}
+              {pending && <p className="text-xs text-muted-foreground">Buscando la sección…</p>}
+              {seconds !== null && active && (
+                <p className="text-xs text-muted-foreground">Duración mínima: {seconds} s</p>
+              )}
+              {captions.length > 0 && (
+                <div className="max-h-32 space-y-1 overflow-y-auto rounded-lg bg-muted/40 p-2 text-xs" aria-live="polite">
+                  {captions.map((row, i) => (
+                    <p key={`${row.role}-${row.start}-${i}`}>
+                      <strong>{row.role}:</strong> {row.text}
+                    </p>
+                  ))}
+                </div>
+              )}
+              {call.playbackBlocked && (
+                <Button variant="glass" className="w-full" onClick={() => call.resumePlayback()}>
+                  <Play /> Activar audio
+                </Button>
+              )}
+              <div className="flex items-center justify-center gap-2">
+                {active ? (
+                  <>
+                    <Button
+                      variant="glass"
+                      size="icon"
+                      onClick={() => call.setMuted(!call.muted)}
+                      aria-label={call.muted ? "Activar micrófono" : "Silenciar micrófono"}
+                    >
+                      {call.muted ? <MicOff /> : <Mic />}
+                    </Button>
+                    <Button variant="destructive" onClick={() => call.stop()}>
+                      <PhoneOff /> Finalizar
+                    </Button>
+                  </>
+                ) : (
+                  <Button variant="flow" onClick={start}>
+                    <Phone /> Llamar a Floppy
+                  </Button>
+                )}
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <Link to="/dashboard/ia" onClick={() => setOpen(false)} className="inline-flex items-center gap-1 underline">
+                  <MessageCircle className="h-3 w-3" /> Abrir chat
+                </Link>
+                <button type="button" onClick={toggleQuiet} className="inline-flex items-center gap-1 text-muted-foreground">
+                  {quiet ? <BellOff className="h-3 w-3" /> : <Bell className="h-3 w-3" />}
+                  {quiet ? "Consejos silenciados" : "Silenciar consejos"}
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
+      {tip && !open && (
+        <div
+          role="status"
+          className="floppy-tip rounded-xl border border-border bg-popover p-3 text-sm text-popover-foreground shadow-glass"
+          style={{
+            left: isLeftSide ? 0 : "auto",
+            right: isLeftSide ? "auto" : 0,
+            top: isTopSide ? `${MASCOT_SIZE + 10}px` : "auto",
+            bottom: isTopSide ? "auto" : `${MASCOT_SIZE + 10}px`,
+          }}
+        >
+          {tip}
+        </div>
+      )}
+
+      <button
         type="button"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
@@ -270,15 +346,10 @@ export function FloppyCompanion() {
             ? "opacity-100 drop-shadow-xl scale-100"
             : "opacity-40 hover:opacity-100 focus-visible:opacity-100 active:opacity-100 drop-shadow-sm hover:drop-shadow-xl hover:scale-105 active:scale-95"
         }`}
-        style={{
-          width: `${MASCOT_SIZE}px`,
-          height: `${MASCOT_SIZE}px`,
-        }}
+        style={{ width: `${MASCOT_SIZE}px`, height: `${MASCOT_SIZE}px` }}
       >
-        <img
-          src={mascot.url}
-          alt="Floppy"
-          className="pointer-events-none h-full w-full object-contain"
-          draggable={false}
-        />
+        <img src={mascot.url} alt="Floppy" className="pointer-events-none h-full w-full object-contain" draggable={false} />
       </button>
+    </aside>
+  );
+}
