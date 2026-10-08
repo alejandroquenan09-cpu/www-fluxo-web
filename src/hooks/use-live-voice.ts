@@ -282,25 +282,26 @@ function createLiveVoice(options: LiveOptions) {
     activate();
   }
 
-  async function gatherCandidates(connection: RTCPeerConnection) {
+    async function gatherCandidates(connection: RTCPeerConnection) {
     if (connection.iceGatheringState === "complete") return;
-    await new Promise<void>((resolve, reject) => {
-      const timeout = setTimeout(() => finish(new Error("Voice network setup timed out")), 10_000);
-      function finish(error?: Error) {
+    await new Promise<void>((resolve) => {
+      // Conecta de inmediato en máximo 450ms sin congelar la llamada
+      const timeout = setTimeout(() => finish(), 450);
+      function finish() {
         clearTimeout(timeout);
         connection.removeEventListener("icegatheringstatechange", changed);
         cancelGathering = undefined;
-        if (error) reject(error);
-        else resolve();
+        resolve();
       }
       function changed() {
         if (connection.iceGatheringState === "complete") finish();
       }
-      cancelGathering = () => finish(new Error("Call ended"));
+      cancelGathering = finish;
       connection.addEventListener("icegatheringstatechange", changed);
       changed();
     });
   }
+
 
   async function start() {
     if (state !== "idle") return;

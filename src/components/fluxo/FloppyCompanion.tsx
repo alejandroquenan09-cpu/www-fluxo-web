@@ -158,9 +158,14 @@ export function FloppyCompanion() {
     };
   }, [quiet, active, pathname]);
 
-  useEffect(() => {
-    if (call.status === "connected") say(first ? null : "Te escucho…", 2500);
-  }, [call.status]); // eslint-disable-line react-hooks/exhaustive-deps
+    useEffect(() => {
+    if (call.status === "connecting") {
+      say("Conectando… ⚡", 2500);
+    } else if (call.status === "connected") {
+      say(first ? null : "¡Listo! Te escucho… 🎙️", 3000);
+    }
+  }, [call.status, first]);
+
 
   const onDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (!pos) return;
@@ -220,7 +225,9 @@ export function FloppyCompanion() {
       scheduleReturnHome(2000);
       return;
     }
-    if (!session) {
+        say("Conectando… ⚡", 2500);
+    call.start();
+
       say("Inicia sesión para hablar conmigo.", 4500);
       router.navigate({ to: "/auth", search: { mode: "login" } as never });
       return;

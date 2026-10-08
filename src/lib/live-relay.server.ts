@@ -557,11 +557,16 @@ export function bindLiveConnection(
     const key = process.env["SUPABASE_PUBLISHABLE_KEY"] ?? process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
     if (!url || !key || !token) throw new Error("Inicia sesión para hablar con Floppy.");
     const client = createClient(url, key, { auth: { persistSession: false }, global: { headers: { Authorization: `Bearer ${token}` } } });
-    const { data: auth, error: authError } = await client.auth.getUser(token);
+        const [authResult, catalogResult] = await Promise.all([
+      client.auth.getUser(token),
+      client.from("services").select("slug,name,description"),
+    ]);
+    const { data: auth, error: authError } = authResult;
     if (authError || !auth.user) throw new Error("Tu sesión expiró. Inicia sesión para continuar.");
-    const { data: services, error: catalogError } = await client.from("services").select("slug,name,description");
+    const { data: services, error: catalogError } = catalogResult;
     if (catalogError) throw new Error("No se pudo consultar el catálogo de Fluxo.");
     catalog = services ?? [];
+
     startupTimer = setTimeout(() => {
       emit({ type: "app.error", error: { message: "Voice startup timed out" } });
       stop();
