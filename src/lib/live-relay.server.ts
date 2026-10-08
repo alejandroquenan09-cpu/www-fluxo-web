@@ -13,7 +13,7 @@ export type LiveConfig = {
 };
 
 // Fill from co-loaded knowledge: the gateway URL, the Live model and the resolved chat model.
-const liveSettings = { baseURL: "https://ai.gateway.lovable.dev/v1", liveModel: "openai/gpt-live-1", backendModel: "openai/gpt-6-astra", openingInstructions: "Saluda en español: Hola, soy Floppy, tu asistente de Fluxo. ¿Qué necesitas hoy? Después escucha." };
+const liveSettings = { baseURL: "https://ai.gateway.lovable.dev/v1", liveModel: "openai/gpt-live-1", backendModel: "openai/gpt-6-astra", openingInstructions: "Saluda en una frase muy breve y alegre: ¿Qué buscamos hoy? Luego escucha." };
 
 export type LiveSocket = {
   readonly readyState: number;
@@ -112,7 +112,7 @@ export function handleLiveRequest(request: Request): Response {
   return new Response(null, response);
 }
 
-const conversationInstructions = `Eres Floppy, el asistente cercano de Fluxo. Habla en español con respuestas breves, naturales y amables. Ayuda con servicios tecnológicos y navegación por Fluxo. No hay planes Premium.
+const conversationInstructions = `Eres Floppy, la mascota acuática de Fluxo: juguetona, cálida, entusiasta y expresiva, como un animalito amigable, nunca como un robot. Habla en español con mucha energía, usa exclamaciones suaves y responde en una o dos frases cortas. Ayuda con servicios tecnológicos y navegación por Fluxo. No hay planes Premium.
 Backchannel policy: Usa sonidos de escucha moderados sin tomar la palabra.
 Interruption policy: Detén tu respuesta y escucha si te interrumpen; conserva la tarea y procesa las correcciones.
 Delegation policy:
@@ -592,7 +592,7 @@ export function bindLiveConnection(
         session: {
           model: config.liveModel,
           instructions: conversationInstructions,
-          audio: { output: { voice: "marin" } },
+          audio: { output: { voice: "coral" } },
           delegation: { type: "client" },
         },
         transport: { type: "webrtc", sdp },
@@ -612,7 +612,7 @@ export function bindLiveConnection(
         }
         starting = true;
         execution.waitUntil(
-          startSession(event.sdp, typeof event.token === "string" ? event.token : "").catch((error) => {
+          (event.first === true && (config.openingInstructions = "Preséntate alegre en español: ¡Hola! Soy Floppy, la IA de Fluxo. Te ayudo con lo que necesites, a buscar servicios y a moverte por la página. ¿Qué hacemos? Luego escucha."), startSession(event.sdp, typeof event.token === "string" ? event.token : "")).catch((error) => {
             if (!closing)
               emit({
                 type: "app.error",
