@@ -1,16 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useRouter, useRouterState } from "@tanstack/react-router";
-import { Bell, BellOff, MessageCircle, Mic, MicOff, Phone, PhoneOff, Play, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useRouter, useRouterState } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { useLiveVoice, type LiveEvent } from "@/hooks/use-live-voice";
 import mascot from "@/assets/floppy.png.asset.json";
 
 const tips = [
-  "Puedo llevarte al servicio que necesitas.",
-  "¿Un problema con tu computador? Lo revisamos juntos.",
-  "También puedes hablar conmigo en una llamada.",
-  "Te ayudo a encontrar y abrir tu solicitud de servicio.",
+  "¡Tócame y dime a dónde quieres ir!",
+  "¿Tu computador anda lento? Te ayudo a encontrar el servicio.",
+  "Puedo llevarte a cualquier parte de la página con tu voz.",
+  "Pídeme reservar un servicio y te llevo directo.",
 ];
 const destinations = new Set([
   "/",
@@ -24,331 +22,225 @@ const destinations = new Set([
   "/dashboard/configuracion",
 ]);
 
-const MASCOT_SIZE = 112; // 200x200 px
+const SIZE = 96;
+const MARGIN = 12;
+const MET_KEY = "fluxo-floppy-met";
+const QUIET_KEY = "fluxo-floppy-quiet";
+
+type Pos = { x: number; y: number };
+
+function clamp(p: Pos): Pos {
+  return {
+    x: Math.min(Math.max(MARGIN, p.x), window.innerWidth - SIZE - MARGIN),
+    y: Math.min(Math.max(MARGIN + 64, p.y), window.innerHeight - SIZE - MARGIN),
+  };
+}
+
+// Random spot along the side edges so Floppy never sits over the reading area.
+function edgeSpot(): Pos {
+  const left = Math.random() < 0.5;
+  const x = left ? MARGIN + Math.random() * 16 : window.innerWidth - SIZE - MARGIN - Math.random() * 16;
+  const y = 90 + Math.random() * Math.max(40, window.innerHeight - SIZE - 120);
+  return clamp({ x, y });
+}
 
 export function FloppyCompanion() {
   const { session } = useAuth();
   const router = useRouter();
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const [open, setOpen] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [pos, setPos] = useState<Pos | null>(null);
+  const [dragging, setDragging] = useState(false);
+  const [bubble, setBubble] = useState<string | null>(null);
+  const [blink, setBlink] = useState(false);
+  const [boing, setBoing] = useState(false);
   const [quiet, setQuiet] = useState(false);
-  const [tip, setTip] = useState<string | null>(null);
-  const [captions, setCaptions] = useState<Array<{ role: string; start: number; text: string }>>([]);
-  const [seconds, setSeconds] = useState<number | null>(null);
-  const [pending, setPending] = useState(false);
+  const [first, setFirst] = useState(false);
+  const drag = useRef({ x: 0, y: 0, px: 0, py: 0, moved: false, down: false });
+  const bubbleTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  // Posición arrastrable
-  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
-  const isDraggingRef = useRef(false);
-  const dragStartRef = useRef<{ x: number; y: number; posX: number; posY: number }>({ x: 0, y: 0, posX: 0, posY: 0 });
-  const hasMovedRef = useRef(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const initialX = Math.max(16, window.innerWidth - MASCOT_SIZE - 20);
-    const initialY = Math.max(16, window.innerHeight - MASCOT_SIZE - (window.innerWidth < 1024 ? 95 : 35));
-    setPosition({ x: initialX, y: initialY });
-
-    const handleResize = () => {
-      setPosition((prev) => {
-        if (!prev) return prev;
-        const clampedX = Math.min(Math.max(12, prev.x), window.innerWidth - MASCOT_SIZE - 12);
-        const clampedY = Math.min(Math.max(12, prev.y), window.innerHeight - MASCOT_SIZE - 12);
-        return { x: clampedX, y: clampedY };
-      });
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const say = (text: string | null, ms = 6000) => {
+    clearTimeout(bubbleTimer.current);
+    setBubble(text);
+    if (text) bubbleTimer.current = setTimeout(() => setBubble(null), ms);
+  };
 
   const onEvent = (event: LiveEvent) => {
-    if (event.type === "app.delegation.pending") setPending(true);
+    if (event.type === "app.delegation.pending") say("Buscando…", 4000);
     if (event.type === "app.navigation") {
-      setPending(false);
       const plan = event["plan"] as { href?: string } | undefined;
       if (!plan?.href) return;
       const target = new URL(plan.href, window.location.origin);
       if (target.origin !== window.location.origin || !destinations.has(target.pathname)) return;
       router.history.push(target.pathname + target.search);
     }
-    if (event.type === "gateway.session.created") setSeconds(15);
-    if (typeof event.usage?.seconds === "number") setSeconds(Math.max(15, event.usage.seconds));
-    if (["app.closed", "app.error", "gateway.error"].includes(event.type)) setPending(false);
-    if (event.type === "session.input_transcript.delta" || event.type === "session.output_transcript.delta") {
-      if (typeof event["delta"] !== "string") return;
-      const text = event["delta"];
-      const role = event.type === "session.input_transcript.delta" ? "Tú" : "Floppy";
-      const start = typeof event["start_ms"] === "number" ? event["start_ms"] : 0;
-      setCaptions((rows) => {
-        const last = rows.at(-1);
-        if (last?.role === role) return [...rows.slice(0, -1), { ...last, text: last.text + text }];
-        return [...rows, { role, start, text }];
-      });
+    if (event.type === "app.connected" && first) {
+      localStorage.setItem(MET_KEY, "true");
+      setFirst(false);
     }
+    if (event.type === "app.error" || event.type === "gateway.error") say("Uy, se cortó. Tócame otra vez.", 5000);
   };
 
-  const call = useLiveVoice({ token: session?.access_token ?? "", onEvent });
+  const call = useLiveVoice({ token: session?.access_token ?? "", first, onEvent });
   const active = call.status === "connecting" || call.status === "connected" || call.status === "stopping";
 
   useEffect(() => {
-    setQuiet(localStorage.getItem("fluxo-floppy-quiet") === "true");
+    setFirst(localStorage.getItem(MET_KEY) !== "true");
+    setQuiet(localStorage.getItem(QUIET_KEY) === "true");
+    setPos(clamp({ x: window.innerWidth - SIZE - 20, y: window.innerHeight - SIZE - 30 }));
+    const onResize = () => setPos((p) => (p ? clamp(p) : p));
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  // Gentle patrol along the edges while idle.
   useEffect(() => {
-    if (quiet || open || active || pathname === "/auth" || pathname === "/reset-password") {
-      setTip(null);
-      return;
-    }
-    let index = 0;
-    let dismiss: ReturnType<typeof setTimeout> | undefined;
+    if (active || dragging) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+    const id = setInterval(() => setPos(edgeSpot()), 14000);
+    return () => clearInterval(id);
+  }, [active, dragging]);
+
+  // Random blinks.
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout>;
+    const loop = () => {
+      t = setTimeout(() => {
+        setBlink(true);
+        setTimeout(() => setBlink(false), 160);
+        loop();
+      }, 4000 + Math.random() * 3000);
+    };
+    loop();
+    return () => clearTimeout(t);
+  }, []);
+
+  // Spontaneous tip bubbles.
+  useEffect(() => {
+    if (quiet || active || pathname === "/auth" || pathname === "/reset-password") return;
+    let i = Math.floor(Math.random() * tips.length);
     const show = () => {
       if (document.hidden || document.querySelector('[role="dialog"]')) return;
-      setTip(tips[index % tips.length] ?? null);
-      index++;
-      dismiss = setTimeout(() => setTip(null), 7000);
+      say(tips[i++ % tips.length] ?? null, 6500);
     };
-    const first = setTimeout(show, 18000);
-    const interval = setInterval(show, 95000);
+    const firstT = setTimeout(show, 15000);
+    const id = setInterval(show, 80000);
     return () => {
-      clearTimeout(first);
-      clearTimeout(dismiss);
-      clearInterval(interval);
+      clearTimeout(firstT);
+      clearInterval(id);
     };
-  }, [quiet, open, active, pathname]);
+  }, [quiet, active, pathname]);
 
-  const toggleQuiet = () => {
-    const value = !quiet;
-    setQuiet(value);
-    setTip(null);
-    localStorage.setItem("fluxo-floppy-quiet", String(value));
+  useEffect(() => {
+    if (call.status === "connected") say(first ? null : "Te escucho…", 2500);
+  }, [call.status]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const onDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!pos) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    drag.current = { x: e.clientX, y: e.clientY, px: pos.x, py: pos.y, moved: false, down: true };
+  };
+  const onMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const d = drag.current;
+    if (!d.down) return;
+    const dx = e.clientX - d.x;
+    const dy = e.clientY - d.y;
+    if (!d.moved && Math.hypot(dx, dy) > 6) {
+      d.moved = true;
+      setDragging(true);
+    }
+    if (d.moved) setPos(clamp({ x: d.px + dx, y: d.py + dy }));
+  };
+  const onUp = () => {
+    drag.current.down = false;
+    setTimeout(() => setDragging(false), 0);
   };
 
-  const close = () => {
-    call.stop();
-    setOpen(false);
-  };
-
-  const start = () => {
-    setCaptions([]);
-    setSeconds(null);
-    setPending(false);
+  const onClick = (e: React.MouseEvent) => {
+    if (drag.current.moved) return;
+    setBoing(true);
+    setTimeout(() => setBoing(false), 450);
+    if (e.altKey) {
+      const v = !quiet;
+      setQuiet(v);
+      localStorage.setItem(QUIET_KEY, String(v));
+      say(v ? "Me quedo calladito." : "¡Vuelvo con consejos!", 2500);
+      return;
+    }
+    if (active) {
+      call.stop();
+      say(null);
+      return;
+    }
+    if (!session) {
+      say("Inicia sesión para hablar conmigo.", 4500);
+      router.navigate({ to: "/auth", search: { mode: "login" } as never });
+      return;
+    }
+    say(null);
     call.start();
   };
 
-  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
-    if (!position) return;
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
-    isDraggingRef.current = true;
-    hasMovedRef.current = false;
-    dragStartRef.current = {
-      x: e.clientX,
-      y: e.clientY,
-      posX: position.x,
-      posY: position.y,
-    };
-  };
-
-  const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
-    if (!isDraggingRef.current) return;
-    const deltaX = e.clientX - dragStartRef.current.x;
-    const deltaY = e.clientY - dragStartRef.current.y;
-
-    if (Math.hypot(deltaX, deltaY) > 6) {
-      hasMovedRef.current = true;
-    }
-
-    const nextX = Math.min(
-      Math.max(12, dragStartRef.current.posX + deltaX),
-      window.innerWidth - MASCOT_SIZE - 12
-    );
-    const nextY = Math.min(
-      Math.max(12, dragStartRef.current.posY + deltaY),
-      window.innerHeight - MASCOT_SIZE - 12
-    );
-
-    setPosition({ x: nextX, y: nextY });
-  };
-
-  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
-    if (!isDraggingRef.current) return;
-    try {
-      (e.target as HTMLElement).releasePointerCapture(e.pointerId);
-    } catch {
-      // Ignorar si el puntero se liberó
-    }
-    isDraggingRef.current = false;
-  };
-
-  const handleMascotClick = () => {
-    if (hasMovedRef.current) return;
-    setOpen(!open);
-    setTip(null);
-    if (open) call.stop();
-  };
-
-  // Saber en qué cuadrante de la pantalla está para orientar la ventana
-  const isLeftSide = position ? position.x < window.innerWidth / 2 : false;
-  const isTopSide = position ? position.y < window.innerHeight / 2 : false;
-
-  // Calcular espacio máximo disponible en vertical
-  const availableHeight = position
-    ? isTopSide
-      ? Math.max(260, window.innerHeight - (position.y + MASCOT_SIZE + 30))
-      : Math.max(260, position.y - 30)
-    : 440;
+  const isLeft = pos ? pos.x < window.innerWidth / 2 : false;
+  const isTop = pos ? pos.y < window.innerHeight / 2 : false;
 
   return (
     <aside
       className="floppy-companion"
-      aria-label="Asistente Floppy"
+      aria-label="Floppy, asistente de Fluxo"
       style={{
-        position: "fixed",
-        left: position ? `${position.x}px` : undefined,
-        top: position ? `${position.y}px` : undefined,
-        right: position ? "auto" : "16px",
-        bottom: position ? "auto" : "90px",
-        width: `${MASCOT_SIZE}px`,
-        height: `${MASCOT_SIZE}px`,
-        zIndex: 45,
+        left: pos ? pos.x : undefined,
+        top: pos ? pos.y : undefined,
+        right: pos ? "auto" : 16,
+        bottom: pos ? "auto" : 30,
+        width: SIZE,
+        height: SIZE,
+        transition: dragging ? "none" : "left 6s ease-in-out, top 6s ease-in-out",
       }}
     >
-      <audio ref={call.audioRef} controls className={open ? "mt-3 w-full" : "hidden"} />
+      <audio ref={call.audioRef} className="hidden" />
 
-      {open && (
-        <section
-          className="floppy-call rounded-xl border border-border bg-popover p-5 text-popover-foreground shadow-glass"
-          aria-label="Llamada con Floppy"
-          style={{
-            position: "absolute",
-            left: isLeftSide ? 0 : "auto",
-            right: isLeftSide ? "auto" : 0,
-            top: isTopSide ? `${MASCOT_SIZE + 10}px` : "auto",
-            bottom: isTopSide ? "auto" : `${MASCOT_SIZE + 10}px`,
-            maxHeight: `${availableHeight}px`,
-            paddingBottom: "1.25rem", // Elimina el padding excesivo
-            overflowY: "auto",
-          }}
-        >
-          <header className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-semibold">Floppy</h2>
-              <p role="status" className="text-xs text-muted-foreground">
-                {
-                  ({
-                    idle: "¿Hablamos?",
-                    connecting: "Conectando…",
-                    connected: "Llamada en vivo",
-                    stopping: "Finalizando…",
-                    closed: "Llamada finalizada",
-                  })[call.status]
-                }
-              </p>
-            </div>
-            <Button variant="ghost" size="icon" onClick={close} aria-label="Cerrar Floppy" title="Cerrar y finalizar llamada">
-              <X />
-            </Button>
-          </header>
-
-          <img src={mascot.url} alt="Floppy, mascota acuática de Fluxo" className="mx-auto h-24 w-24 object-contain my-1" />
-
-          {!active && !session && (
-            <div className="text-center">
-              <p className="mb-4 text-sm">Inicia sesión para hablar con Floppy.</p>
-              <Button asChild variant="flow">
-                <Link to="/auth" search={{ mode: "login" }} onClick={() => setOpen(false)}>
-                  Iniciar sesión
-                </Link>
-              </Button>
-            </div>
-          )}
-
-          {(active || session) && (
-            <div className="space-y-3">
-              {call.error && <p className="text-sm text-destructive">{call.error}</p>}
-              {pending && <p className="text-xs text-muted-foreground">Buscando la sección…</p>}
-              {seconds !== null && active && (
-                <p className="text-xs text-muted-foreground">Duración mínima: {seconds} s</p>
-              )}
-              {captions.length > 0 && (
-                <div className="max-h-32 space-y-1 overflow-y-auto rounded-lg bg-muted/40 p-2 text-xs" aria-live="polite">
-                  {captions.map((row, i) => (
-                    <p key={`${row.role}-${row.start}-${i}`}>
-                      <strong>{row.role}:</strong> {row.text}
-                    </p>
-                  ))}
-                </div>
-              )}
-              {call.playbackBlocked && (
-                <Button variant="glass" className="w-full" onClick={() => call.resumePlayback()}>
-                  <Play /> Activar audio
-                </Button>
-              )}
-              <div className="flex items-center justify-center gap-2">
-                {active ? (
-                  <>
-                    <Button
-                      variant="glass"
-                      size="icon"
-                      onClick={() => call.setMuted(!call.muted)}
-                      aria-label={call.muted ? "Activar micrófono" : "Silenciar micrófono"}
-                    >
-                      {call.muted ? <MicOff /> : <Mic />}
-                    </Button>
-                    <Button variant="destructive" onClick={() => call.stop()}>
-                      <PhoneOff /> Finalizar
-                    </Button>
-                  </>
-                ) : (
-                  <Button variant="flow" onClick={start}>
-                    <Phone /> Llamar a Floppy
-                  </Button>
-                )}
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <Link to="/dashboard/ia" onClick={() => setOpen(false)} className="inline-flex items-center gap-1 underline">
-                  <MessageCircle className="h-3 w-3" /> Abrir chat
-                </Link>
-                <button type="button" onClick={toggleQuiet} className="inline-flex items-center gap-1 text-muted-foreground">
-                  {quiet ? <BellOff className="h-3 w-3" /> : <Bell className="h-3 w-3" />}
-                  {quiet ? "Consejos silenciados" : "Silenciar consejos"}
-                </button>
-              </div>
-            </div>
-          )}
-        </section>
-      )}
-
-      {tip && !open && (
+      {bubble && (
         <div
           role="status"
-          className="floppy-tip rounded-xl border border-border bg-popover p-3 text-sm text-popover-foreground shadow-glass"
+          className="floppy-tip"
           style={{
-            left: isLeftSide ? 0 : "auto",
-            right: isLeftSide ? "auto" : 0,
-            top: isTopSide ? `${MASCOT_SIZE + 10}px` : "auto",
-            bottom: isTopSide ? "auto" : `${MASCOT_SIZE + 10}px`,
+            left: isLeft ? 0 : "auto",
+            right: isLeft ? "auto" : 0,
+            top: isTop ? SIZE + 8 : "auto",
+            bottom: isTop ? "auto" : SIZE + 8,
           }}
         >
-          {tip}
+          {bubble}
         </div>
       )}
 
       <button
         type="button"
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onClick={handleMascotClick}
-        aria-label={open ? "Cerrar asistente Floppy" : "Abrir asistente Floppy"}
-        title="Arrastra a Floppy o haz clic para abrir"
-        className={`floppy-mascot relative flex items-center justify-center rounded-full p-0 cursor-grab active:cursor-grabbing touch-none select-none transition-all duration-300 ease-in-out ${
-          open || active
-            ? "opacity-100 drop-shadow-xl scale-100"
-            : "opacity-40 hover:opacity-100 focus-visible:opacity-100 active:opacity-100 drop-shadow-sm hover:drop-shadow-xl hover:scale-105 active:scale-95"
-        }`}
-        style={{ width: `${MASCOT_SIZE}px`, height: `${MASCOT_SIZE}px` }}
+        onPointerDown={onDown}
+        onPointerMove={onMove}
+        onPointerUp={onUp}
+        onPointerCancel={onUp}
+        onClick={onClick}
+        aria-pressed={active}
+        aria-label={active ? "Detener a Floppy" : "Hablar con Floppy"}
+        title={active ? "Toca para interrumpir" : "Toca para hablar · arrástrame · Alt+clic silencia consejos"}
+        className={`floppy-mascot ${active ? "is-active" : ""} ${call.status === "connecting" ? "is-connecting" : ""} ${boing ? "is-boing" : ""}`}
       >
-        <img src={mascot.url} alt="Floppy" className="pointer-events-none h-full w-full object-contain" draggable={false} />
+        {active && (
+          <>
+            <span className="floppy-aura" aria-hidden />
+            <span className="floppy-aura floppy-aura-2" aria-hidden />
+          </>
+        )}
+        <span className="floppy-body">
+          <img
+            src={mascot.url}
+            alt=""
+            draggable={false}
+            className={`floppy-img ${blink ? "is-blink" : ""}`}
+          />
+        </span>
       </button>
     </aside>
   );

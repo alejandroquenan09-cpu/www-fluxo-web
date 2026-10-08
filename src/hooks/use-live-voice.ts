@@ -32,6 +32,7 @@ export function useLiveVoice(
   options: {
     url?: string;
     token?: string;
+    first?: boolean;
     onEvent?: (event: LiveEvent) => void | Promise<void>;
   } = {},
 ) {
@@ -74,6 +75,7 @@ export function useLiveVoice(
       url: endpoint.href,
       audio,
       token: latest.current.token ?? "",
+      first: latest.current.first ?? false,
       onEvent(event) {
         if (!mounted.current || controller.current !== voice) return;
         if (event.type === "app.connected") {
@@ -124,6 +126,7 @@ export function useLiveVoice(
 type LiveOptions = {
   url: string;
   token?: string;
+  first?: boolean;
   audio: HTMLAudioElement;
   onEvent: (event: LiveEvent) => void;
 };
@@ -354,7 +357,7 @@ function createLiveVoice(options: LiveOptions) {
       deadline = setTimeout(() => fail("Voice session did not start"), 50_000);
       socket.onopen = () => {
         if (!starting()) return release();
-        send({ type: "app.start", sdp, token: options.token });
+        send({ type: "app.start", sdp, token: options.token, first: options.first });
       };
       socket.onmessage = ({ data }) => {
         try {
