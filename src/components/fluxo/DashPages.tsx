@@ -73,7 +73,6 @@ export function DashHome() {
       </div>
 
       </div>
-    </div>
   );
 }
 
