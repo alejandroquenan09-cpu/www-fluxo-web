@@ -73,7 +73,7 @@ export function useLiveVoice(
     const voice = createLiveVoice({
       url: endpoint.href,
       audio,
-      token: latest.current.token,
+      token: latest.current.token ?? "",
       onEvent(event) {
         if (!mounted.current || controller.current !== voice) return;
         if (event.type === "app.connected") {
