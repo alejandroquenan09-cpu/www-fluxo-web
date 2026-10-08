@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter, useRouterState } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { useLiveVoice, type LiveEvent } from "@/hooks/use-live-voice";
@@ -15,6 +15,7 @@ const tips = [
   "Soy Floppy, te puedo ayudar?",
   "Presioname y en un momento estare contigo navegando por Fluxo",
 ];
+
 const destinations = new Set([
   "/",
   "/servicios",
@@ -31,6 +32,7 @@ const SIZE = 96;
 const MARGIN = 12;
 const MET_KEY = "fluxo-floppy-met";
 const QUIET_KEY = "fluxo-floppy-quiet";
+const RETURN_DELAY_MS = 6000; // 6 segundos de inactividad antes de volver a su esquina
 
 type Pos = { x: number; y: number };
 
@@ -41,12 +43,12 @@ function clamp(p: Pos): Pos {
   };
 }
 
-// Punto aleatorio por las orillas cuando está en reposo.
-function edgeSpot(): Pos {
-  const left = Math.random() < 0.5;
-  const x = left ? MARGIN + Math.random() * 16 : window.innerWidth - SIZE - MARGIN - Math.random() * 16;
-  const y = 90 + Math.random() * Math.max(40, window.innerHeight - SIZE - 120);
-  return clamp({ x, y });
+// Esquina inferior derecha donde Floppy reposa sin estorbar
+function homeSpot(): Pos {
+  return clamp({
+    x: window.innerWidth - SIZE - 20,
+    y: window.innerHeight - SIZE - 30,
+  });
 }
 
 export function FloppyCompanion() {
@@ -56,6 +58,7 @@ export function FloppyCompanion() {
   const [pos, setPos] = useState<Pos | null>(null);
   const [dragging, setDragging] = useState(false);
   const [snapping, setSnapping] = useState(false);
+  const [returningHome, setReturningHome] = useState(false);
   const [bubble, setBubble] = useState<string | null>(null);
   const [blink, setBlink] = useState(false);
   const [boing, setBoing] = useState(false);
@@ -63,6 +66,7 @@ export function FloppyCompanion() {
   const [first, setFirst] = useState(false);
   const drag = useRef({ x: 0, y: 0, px: 0, py: 0, moved: false, down: false });
   const bubbleTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const returnTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const say = (text: string | null, ms = 6000) => {
     clearTimeout(bubbleTimer.current);
@@ -89,23 +93,40 @@ export function FloppyCompanion() {
   const call = useLiveVoice({ token: session?.access_token ?? "", first, onEvent });
   const active = call.status === "connecting" || call.status === "connected" || call.status === "stopping";
 
+  // Función para programar el regreso suave a su esquina
+  const scheduleReturnHome = useCallback((delay = RETURN_DELAY_MS) => {
+    clearTimeout(returnTimer.current);
+    returnTimer.current = setTimeout(() => {
+      if (active || drag.current.down) return;
+      const home = homeSpot();
+      setPos((current) => {
+        if (!current) return home;
+        // Si ya está en la esquina inferior derecha, no anima
+        if (Math.hypot(current.x - home.x, current.y - home.y) < 16) return current;
+        setReturningHome(true);
+        setTimeout(() => setReturningHome(false), 1250);
+        return home;
+      });
+    }, delay);
+  }, [active]);
+
   useEffect(() => {
     setFirst(localStorage.getItem(MET_KEY) !== "true");
     setQuiet(localStorage.getItem(QUIET_KEY) === "true");
-    setPos(clamp({ x: window.innerWidth - SIZE - 20, y: window.innerHeight - SIZE - 30 }));
-    const onResize = () => setPos((p) => (p ? clamp(p) : p));
+    setPos(homeSpot());
+    const onResize = () => setPos((p) => (p ? clamp(p) : homeSpot()));
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // Paseo suave por los bordes en reposo
+  // Si la llamada termina, programa su regreso a la esquina
   useEffect(() => {
-    if (active || dragging || snapping) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) return;
-    const id = setInterval(() => setPos(edgeSpot()), 14000);
-    return () => clearInterval(id);
-  }, [active, dragging, snapping]);
+    if (!active) {
+      scheduleReturnHome(4000);
+    } else {
+      clearTimeout(returnTimer.current);
+    }
+  }, [active, scheduleReturnHome]);
 
   // Parpadeos aleatorios
   useEffect(() => {
@@ -143,6 +164,8 @@ export function FloppyCompanion() {
 
   const onDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (!pos) return;
+    clearTimeout(returnTimer.current);
+    setReturningHome(false);
     e.currentTarget.setPointerCapture(e.pointerId);
     drag.current = { x: e.clientX, y: e.clientY, px: pos.x, py: pos.y, moved: false, down: true };
   };
@@ -173,6 +196,8 @@ export function FloppyCompanion() {
         setSnapping(false);
         setDragging(false);
       }, 550);
+      // Tras ajustarse al borde, programa el retorno a casa si nadie lo vuelve a tocar
+      scheduleReturnHome(RETURN_DELAY_MS);
     } else {
       setTimeout(() => setDragging(false), 0);
     }
@@ -192,6 +217,7 @@ export function FloppyCompanion() {
     if (active) {
       call.stop();
       say(null);
+      scheduleReturnHome(2000);
       return;
     }
     if (!session) {
@@ -213,7 +239,7 @@ export function FloppyCompanion() {
       style={{
         left: pos ? pos.x : undefined,
         top: pos ? pos.y : undefined,
-        right: pos ? "auto" : 16,
+        right: pos ? "auto" : 20,
         bottom: pos ? "auto" : 30,
         width: SIZE,
         height: SIZE,
@@ -221,7 +247,9 @@ export function FloppyCompanion() {
           ? "none"
           : snapping
           ? "left 0.55s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.55s cubic-bezier(0.2, 0.8, 0.2, 1)"
-          : "left 6s ease-in-out, top 6s ease-in-out",
+          : returningHome
+          ? "left 1.2s cubic-bezier(0.25, 1, 0.5, 1), top 1.2s cubic-bezier(0.25, 1, 0.5, 1)"
+          : "none",
       }}
     >
       <audio ref={call.audioRef} className="hidden" />
