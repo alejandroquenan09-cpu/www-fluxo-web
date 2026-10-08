@@ -208,7 +208,7 @@ export function FloppyCompanion() {
     }
   };
 
-  const onClick = (e: React.MouseEvent) => {
+    const onClick = (e: React.MouseEvent) => {
     if (drag.current.moved) return;
     setBoing(true);
     setTimeout(() => setBoing(false), 450);
@@ -219,6 +219,21 @@ export function FloppyCompanion() {
       say(v ? "Me quedo calladito." : "¡Vuelvo con consejos!", 2500);
       return;
     }
+    if (active) {
+      call.stop();
+      say(null);
+      scheduleReturnHome(2000);
+      return;
+    }
+    if (!session) {
+      say("Inicia sesión para hablar conmigo.", 4500);
+      router.navigate({ to: "/auth", search: { mode: "login" } as never });
+      return;
+    }
+    say("Conectando… ⚡", 2500);
+    call.start();
+  };
+
     if (active) {
       call.stop();
       say(null);
