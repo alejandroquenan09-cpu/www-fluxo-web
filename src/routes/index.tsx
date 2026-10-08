@@ -58,16 +58,30 @@ function Home() {
             className="mt-10 flex animate-fade-in flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center"
             style={{ animationDelay: "320ms", animationFillMode: "both" }}
           >
-            {!user && (
-              <Button asChild variant="flow" size="xl">
-                <Link to="/auth" search={{ mode: "signup" }}>
-                  Comenzar ahora <ArrowRight />
+            {!user ? (
+              <>
+                <Button asChild variant="flow" size="xl">
+                  <Link to="/auth" search={{ mode: "signup" }}>
+                    Comenzar ahora <ArrowRight />
+                  </Link>
+                </Button>
+                <Button asChild variant="glass" size="xl">
+                  <Link to="/servicios">Servicios de Fluxo</Link>
+                </Button>
+              </>
+            ) : (
+              <Button
+                asChild
+                variant="flow"
+                className="group h-14 sm:h-16 px-10 text-lg sm:text-xl font-bold shadow-glow hover:scale-105 transition-all duration-300 gap-3 rounded-full"
+              >
+                <Link to="/servicios">
+                  <Sparkles className="h-5 w-5 animate-pulse text-primary-foreground" />
+                  <span>Servicios de Fluxo</span>
+                  <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1 text-primary-foreground" />
                 </Link>
               </Button>
             )}
-            <Button asChild variant="glass" size="xl">
-              <Link to="/servicios">Servicios de Fluxo</Link>
-            </Button>
           </div>
         </div>
       </section>
