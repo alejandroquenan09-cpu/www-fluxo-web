@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { ArrowLeft, Sparkles } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -50,14 +51,27 @@ export function DashHome() {
         </div>
       </div>
 
-      {/* Botones inferiores: ahora con tu correo donde antes estaba el botón */}
-      <div className="mt-6 flex flex-wrap items-center gap-3">
-        <Button asChild variant="flow" size="xl">
-          <Link to="/dashboard/ia">Consultar a Floppy</Link>
+            {/* Botones inferiores: regreso al inicio, consulta a Floppy y cuenta */}
+      <div className="mt-8 flex flex-wrap items-center gap-3">
+        <Button asChild variant="flow" size="xl" className="shadow-lg shadow-primary/20">
+          <Link to="/" className="flex items-center gap-2">
+            <ArrowLeft className="h-5 w-5" />
+            <span>Volver a la página principal</span>
+          </Link>
         </Button>
+
+        <Button asChild variant="glass" size="xl" className="border-primary/30 hover:border-primary/60">
+          <Link to="/dashboard/ia" className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <span>Consultar a Floppy</span>
+          </Link>
+        </Button>
+
         <div className="glass flex items-center rounded-2xl px-5 py-3 text-sm text-muted-foreground">
           <span>Cuenta: <strong className="font-medium text-foreground">{user.email}</strong></span>
         </div>
+      </div>
+
       </div>
     </div>
   );
