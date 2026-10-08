@@ -7,8 +7,13 @@ import mascot from "@/assets/floppy.png.asset.json";
 const tips = [
   "¡Tócame y dime a dónde quieres ir!",
   "¿Tu computador anda lento? Te ayudo a encontrar el servicio.",
+  "¡Tócame y dime a dónde quieres ir!",
   "Puedo llevarte a cualquier parte de la página con tu voz.",
   "Pídeme reservar un servicio y te llevo directo.",
+  "Siempre estoy aqui para ayudarte.",
+  "¡Tócame y dime a dónde quieres ir!",
+  "Soy Floppy, te puedo ayudar?",
+  "Presioname y en un momento estare contigo navegando por Fluxo",
 ];
 const destinations = new Set([
   "/",
@@ -36,7 +41,7 @@ function clamp(p: Pos): Pos {
   };
 }
 
-// Random spot along the side edges so Floppy never sits over the reading area.
+// Punto aleatorio por las orillas cuando está en reposo.
 function edgeSpot(): Pos {
   const left = Math.random() < 0.5;
   const x = left ? MARGIN + Math.random() * 16 : window.innerWidth - SIZE - MARGIN - Math.random() * 16;
@@ -50,6 +55,7 @@ export function FloppyCompanion() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [pos, setPos] = useState<Pos | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [snapping, setSnapping] = useState(false);
   const [bubble, setBubble] = useState<string | null>(null);
   const [blink, setBlink] = useState(false);
   const [boing, setBoing] = useState(false);
@@ -92,16 +98,16 @@ export function FloppyCompanion() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // Gentle patrol along the edges while idle.
+  // Paseo suave por los bordes en reposo
   useEffect(() => {
-    if (active || dragging) return;
+    if (active || dragging || snapping) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) return;
     const id = setInterval(() => setPos(edgeSpot()), 14000);
     return () => clearInterval(id);
-  }, [active, dragging]);
+  }, [active, dragging, snapping]);
 
-  // Random blinks.
+  // Parpadeos aleatorios
   useEffect(() => {
     let t: ReturnType<typeof setTimeout>;
     const loop = () => {
@@ -115,7 +121,7 @@ export function FloppyCompanion() {
     return () => clearTimeout(t);
   }, []);
 
-  // Spontaneous tip bubbles.
+  // Consejos espontáneos
   useEffect(() => {
     if (quiet || active || pathname === "/auth" || pathname === "/reset-password") return;
     let i = Math.floor(Math.random() * tips.length);
@@ -140,6 +146,7 @@ export function FloppyCompanion() {
     e.currentTarget.setPointerCapture(e.pointerId);
     drag.current = { x: e.clientX, y: e.clientY, px: pos.x, py: pos.y, moved: false, down: true };
   };
+
   const onMove = (e: React.PointerEvent<HTMLButtonElement>) => {
     const d = drag.current;
     if (!d.down) return;
@@ -151,9 +158,24 @@ export function FloppyCompanion() {
     }
     if (d.moved) setPos(clamp({ x: d.px + dx, y: d.py + dy }));
   };
+
   const onUp = () => {
     drag.current.down = false;
-    setTimeout(() => setDragging(false), 0);
+    if (drag.current.moved) {
+      setSnapping(true);
+      setPos((current) => {
+        if (!current) return current;
+        const midX = current.x + SIZE / 2;
+        const targetX = midX < window.innerWidth / 2 ? MARGIN : window.innerWidth - SIZE - MARGIN;
+        return clamp({ x: targetX, y: current.y });
+      });
+      setTimeout(() => {
+        setSnapping(false);
+        setDragging(false);
+      }, 550);
+    } else {
+      setTimeout(() => setDragging(false), 0);
+    }
   };
 
   const onClick = (e: React.MouseEvent) => {
@@ -195,7 +217,11 @@ export function FloppyCompanion() {
         bottom: pos ? "auto" : 30,
         width: SIZE,
         height: SIZE,
-        transition: dragging ? "none" : "left 6s ease-in-out, top 6s ease-in-out",
+        transition: dragging
+          ? "none"
+          : snapping
+          ? "left 0.55s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.55s cubic-bezier(0.2, 0.8, 0.2, 1)"
+          : "left 6s ease-in-out, top 6s ease-in-out",
       }}
     >
       <audio ref={call.audioRef} className="hidden" />
