@@ -65,7 +65,7 @@ export function FloppyCompanion() {
     if (event.type === "app.delegation.pending") setPending(true);
     if (event.type === "app.navigation") {
       setPending(false);
-      const plan = event.plan as { href?: string } | undefined;
+      const plan = event["plan"] as { href?: string } | undefined;
       if (!plan?.href) return;
       const target = new URL(plan.href, window.location.origin);
       if (target.origin !== window.location.origin || !destinations.has(target.pathname)) return;
@@ -75,10 +75,10 @@ export function FloppyCompanion() {
     if (typeof event.usage?.seconds === "number") setSeconds(Math.max(15, event.usage.seconds));
     if (["app.closed", "app.error", "gateway.error"].includes(event.type)) setPending(false);
     if (event.type === "session.input_transcript.delta" || event.type === "session.output_transcript.delta") {
-      if (typeof event.delta !== "string") return;
-      const text = event.delta;
+      if (typeof event["delta"] !== "string") return;
+      const text = event["delta"];
       const role = event.type === "session.input_transcript.delta" ? "Tú" : "Floppy";
-      const start = typeof event.start_ms === "number" ? event.start_ms : 0;
+      const start = typeof event["start_ms"] === "number" ? event["start_ms"] : 0;
       setCaptions((rows) => {
         const last = rows.at(-1);
         if (last?.role === role) return [...rows.slice(0, -1), { ...last, text: last.text + text }];
@@ -87,7 +87,7 @@ export function FloppyCompanion() {
     }
   };
 
-  const call = useLiveVoice({ token: session?.access_token, onEvent });
+  const call = useLiveVoice({ token: session?.access_token ?? "", onEvent });
   const active = call.status === "connecting" || call.status === "connected" || call.status === "stopping";
 
   useEffect(() => {
@@ -103,7 +103,7 @@ export function FloppyCompanion() {
     let dismiss: ReturnType<typeof setTimeout> | undefined;
     const show = () => {
       if (document.hidden || document.querySelector('[role="dialog"]')) return;
-      setTip(tips[index % tips.length]);
+      setTip(tips[index % tips.length] ?? null);
       index++;
       dismiss = setTimeout(() => setTip(null), 7000);
     };
