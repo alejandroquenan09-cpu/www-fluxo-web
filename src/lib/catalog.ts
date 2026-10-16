@@ -14,6 +14,22 @@ export interface ServiceItem {
   description: string;
   features: string[]; // 3 puntos clave rápidos e intuitivos
   price_cop: number;
+  export interface ServiceItem {
+  id: string;
+  parentId: string;
+  category: ServiceCategory;
+  categoryLabel: string;
+  name: string;
+  slug: string;
+  description: string;
+  features: string[];
+  price_cop: number;
+  icon: "wrench" | "network" | "code" | "monitor" | "sparkles";
+  image?: string; // Fotografía temática del servicio
+  status?: "active" | "soon";
+  details?: string;
+}
+
   icon: "wrench" | "network" | "code" | "monitor" | "sparkles";
   status?: "active" | "soon";
   details?: string;
