@@ -21,20 +21,6 @@ export interface ServiceItem {
 }
 
 export const CATEGORIES: { id: "todos" | ServiceCategory; label: string }[] = [
-
-  price_cop: number;
-  icon: "wrench" | "network" | "code" | "monitor" | "sparkles";
-  image?: string; // Fotografía temática del servicio
-  status?: "active" | "soon";
-  details?: string;
-}
-
-  icon: "wrench" | "network" | "code" | "monitor" | "sparkles";
-  status?: "active" | "soon";
-  details?: string;
-}
-
-export const CATEGORIES: { id: "todos" | ServiceCategory; label: string }[] = [
   { id: "todos", label: "Todos" },
   { id: "mantenimiento", label: "Mantenimiento" },
   { id: "redes", label: "Redes y Conexiones" },
