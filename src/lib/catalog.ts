@@ -6,16 +6,6 @@ export type ServiceCategory = "mantenimiento" | "redes" | "web" | "digital" | "s
 
 export interface ServiceItem {
   id: string;
-  parentId: string; // ID real en la base de datos para la reserva
-  category: ServiceCategory;
-  categoryLabel: string;
-  name: string;
-  slug: string;
-  description: string;
-  features: string[]; // 3 puntos clave rápidos e intuitivos
-  price_cop: number;
-  export interface ServiceItem {
-  id: string;
   parentId: string;
   category: ServiceCategory;
   categoryLabel: string;
@@ -23,6 +13,15 @@ export interface ServiceItem {
   slug: string;
   description: string;
   features: string[];
+  price_cop: number;
+  icon: "wrench" | "network" | "code" | "monitor" | "sparkles";
+  image?: string;
+  status?: "active" | "soon";
+  details?: string;
+}
+
+export const CATEGORIES: { id: "todos" | ServiceCategory; label: string }[] = [
+
   price_cop: number;
   icon: "wrench" | "network" | "code" | "monitor" | "sparkles";
   image?: string; // Fotografía temática del servicio
