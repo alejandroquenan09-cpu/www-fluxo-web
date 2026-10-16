@@ -5,15 +5,13 @@ import { useLiveVoice, type LiveEvent } from "@/hooks/use-live-voice";
 import mascot from "@/assets/floppy.png.asset.json";
 
 const tips = [
-  "¡Tócame y dime a dónde quieres ir!",
+  "¡Tócame para chatear conmigo!",
   "¿Tu computador anda lento? Te ayudo a encontrar el servicio.",
-  "¡Tócame y dime a dónde quieres ir!",
-  "Puedo llevarte a cualquier parte de la página con tu voz.",
-  "Pídeme reservar un servicio y te llevo directo.",
-  "Siempre estoy aqui para ayudarte.",
-  "¡Tócame y dime a dónde quieres ir!",
-  "Soy Floppy, te puedo ayudar?",
-  "Presioname y  estare contigo navegando por Fluxo",
+  "Pídeme asesoría o información sobre cualquier servicio.",
+  "Puedo ayudarte a resolver dudas técnicas.",
+  "Siempre estoy aquí para acompañarte.",
+  "Soy Floppy, ¿en qué te puedo ayudar hoy?",
+  "Presióname y abrimos el chat de Floppy.",
 ];
 
 const destinations = new Set([
@@ -23,6 +21,7 @@ const destinations = new Set([
   "/nuestra-esencia",
   "/sobre",
   "/dashboard",
+  "/dashboard/ia",
   "/dashboard/reservas",
   "/dashboard/perfil",
   "/dashboard/configuracion",
@@ -32,7 +31,7 @@ const SIZE = 96;
 const MARGIN = 12;
 const MET_KEY = "fluxo-floppy-met";
 const QUIET_KEY = "fluxo-floppy-quiet";
-const RETURN_DELAY_MS = 6000; // 6 segundos de inactividad antes de volver a su esquina
+const RETURN_DELAY_MS = 6000;
 
 type Pos = { x: number; y: number };
 
@@ -43,7 +42,6 @@ function clamp(p: Pos): Pos {
   };
 }
 
-// Esquina inferior derecha donde Floppy reposa sin estorbar
 function homeSpot(): Pos {
   return clamp({
     x: window.innerWidth - SIZE - 20,
@@ -64,7 +62,7 @@ export function FloppyCompanion() {
   const [boing, setBoing] = useState(false);
   const [quiet, setQuiet] = useState(false);
   const [first, setFirst] = useState(false);
-  const drag = useRef({ x: 0, y: 0, px: 0, py: 0, moved: false, down: false });
+  const drag = useRef({ x: 0, y: 0, px: 0, py: 0, moved: false, down: true });
   const bubbleTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const returnTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -87,13 +85,11 @@ export function FloppyCompanion() {
       localStorage.setItem(MET_KEY, "true");
       setFirst(false);
     }
-    if (event.type === "app.error" || event.type === "gateway.error") say("Uy, se cortó. Tócame otra vez.", 5000);
   };
 
   const call = useLiveVoice({ token: session?.access_token ?? "", first, onEvent });
   const active = call.status === "connecting" || call.status === "connected" || call.status === "stopping";
 
-  // Función para programar el regreso suave a su esquina
   const scheduleReturnHome = useCallback((delay = RETURN_DELAY_MS) => {
     clearTimeout(returnTimer.current);
     returnTimer.current = setTimeout(() => {
@@ -101,7 +97,6 @@ export function FloppyCompanion() {
       const home = homeSpot();
       setPos((current) => {
         if (!current) return home;
-        // Si ya está en la esquina inferior derecha, no anima
         if (Math.hypot(current.x - home.x, current.y - home.y) < 16) return current;
         setReturningHome(true);
         setTimeout(() => setReturningHome(false), 1250);
@@ -119,16 +114,7 @@ export function FloppyCompanion() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // Si la llamada termina, programa su regreso a la esquina
-  useEffect(() => {
-    if (!active) {
-      scheduleReturnHome(4000);
-    } else {
-      clearTimeout(returnTimer.current);
-    }
-  }, [active, scheduleReturnHome]);
-
-  // Parpadeos aleatorios
+  // Parpadeos espontáneos
   useEffect(() => {
     let t: ReturnType<typeof setTimeout>;
     const loop = () => {
@@ -142,9 +128,9 @@ export function FloppyCompanion() {
     return () => clearTimeout(t);
   }, []);
 
-  // Consejos espontáneos
+  // Consejos espontáneos (no aparecen en el chat ni en auth)
   useEffect(() => {
-    if (quiet || active || pathname === "/auth" || pathname === "/reset-password") return;
+    if (quiet || active || pathname === "/auth" || pathname === "/reset-password" || pathname.includes("/ia")) return;
     let i = Math.floor(Math.random() * tips.length);
     const show = () => {
       if (document.hidden || document.querySelector('[role="dialog"]')) return;
@@ -157,14 +143,6 @@ export function FloppyCompanion() {
       clearInterval(id);
     };
   }, [quiet, active, pathname]);
-
-  useEffect(() => {
-    if (call.status === "connecting") {
-      say("Conectando… ⚡", 2500);
-    } else if (call.status === "connected") {
-      say(first ? null : "¡Listo! Te escucho… 🎙️", 3000);
-    }
-  }, [call.status, first]);
 
   const onDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (!pos) return;
@@ -200,7 +178,6 @@ export function FloppyCompanion() {
         setSnapping(false);
         setDragging(false);
       }, 550);
-      // Tras ajustarse al borde, programa el retorno a casa si nadie lo vuelve a tocar
       scheduleReturnHome(RETURN_DELAY_MS);
     } else {
       setTimeout(() => setDragging(false), 0);
@@ -211,6 +188,8 @@ export function FloppyCompanion() {
     if (drag.current.moved) return;
     setBoing(true);
     setTimeout(() => setBoing(false), 450);
+
+    // Silenciar o activar consejos con Alt + clic
     if (e.altKey) {
       const v = !quiet;
       setQuiet(v);
@@ -218,19 +197,19 @@ export function FloppyCompanion() {
       say(v ? "Me quedo calladito." : "¡Vuelvo con consejos!", 2500);
       return;
     }
-    if (active) {
-      call.stop();
-      say(null);
-      scheduleReturnHome(2000);
+
+    // Si ya está en la vista del chat de Floppy
+    if (pathname === "/dashboard/ia" || pathname === "/ia") {
+      say("¡Ya estás chateando conmigo! 💬", 3000);
       return;
     }
-    if (!session) {
-      say("Inicia sesión para hablar conmigo.", 4500);
-      router.navigate({ to: "/auth", search: { mode: "login" } as never });
-      return;
+
+    // Redirección inmediata al chat de Floppy
+    if (session) {
+      router.navigate({ to: "/dashboard/ia" });
+    } else {
+      router.navigate({ to: "/ia" });
     }
-    say("Conectando… ⚡", 2500);
-    call.start();
   };
 
   const isLeft = pos ? pos.x < window.innerWidth / 2 : false;
@@ -280,21 +259,14 @@ export function FloppyCompanion() {
         onPointerUp={onUp}
         onPointerCancel={onUp}
         onClick={onClick}
-        aria-pressed={active}
-        aria-label={active ? "Detener a Floppy" : "Hablar con Floppy"}
-        title={active ? "Toca para interrumpir" : "Toca para hablar · arrástrame · Alt+clic silencia consejos"}
-        className={`floppy-mascot ${active ? "is-active" : ""} ${call.status === "connecting" ? "is-connecting" : ""} ${boing ? "is-boing" : ""}`}
+        aria-label="Abrir el chat con Floppy"
+        title="Toca para chatear con Floppy · arrástrame para moverme"
+        className={`floppy-mascot ${boing ? "is-boing" : ""}`}
       >
-        {active && (
-          <>
-            <span className="floppy-aura" aria-hidden />
-            <span className="floppy-aura floppy-aura-2" aria-hidden />
-          </>
-        )}
         <span className="floppy-body">
           <img
             src={mascot.url}
-            alt=""
+            alt="Floppy"
             draggable={false}
             className={`floppy-img ${blink ? "is-blink" : ""}`}
           />
