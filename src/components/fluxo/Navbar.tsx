@@ -13,7 +13,9 @@ const NAV = [
   { to: "/ia", label: "Floppy" },
   { to: "/nuestra-esencia", label: "Nuestra Esencia" },
   { to: "/sobre", label: "Sobre Fluxo" },
+  { to: "/proyectos", label: "Proyectos" },
 ] as const;
+
 
 
 export function Navbar() {
