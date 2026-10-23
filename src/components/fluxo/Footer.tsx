@@ -4,10 +4,10 @@ import { Logo } from "./Logo";
 
 // Configura aquí tus enlaces y número de WhatsApp
 export const SOCIAL_LINKS = {
-  whatsapp: "https://wa.me/573122238923?text=Hola%20Fluxo,%20quisiera%20consultar%20sobre%20un%20servicio",
+ whatsapp: "https://api.whatsapp.com/send?phone=573122238923&text=Hola%20Fluxo,%20quisiera%20consultar%20sobre%20un%20servicio"
   tiktok: "https://www.tiktok.com/@fluxo.co?_r=1&_t=ZS-9AncKyWd37F", // Cambia por tu usuario real
-  youtube: "https://youtube.com/@fluxoco?si=_iHnTPo5Ni5LpJAX", // Cambia por tu canal real
-};
+  youtube: "https://www.youtube.com/@fluxoco"
+
 
 function TikTokIcon({ className }: { className?: string }) {
   return (
