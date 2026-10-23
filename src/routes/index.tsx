@@ -105,7 +105,7 @@ function Home() {
           <div className="relative grid items-center gap-10 md:grid-cols-2">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">Floppy</p>
-              <h2 className="mt-4 text-3xl font-semibold sm:text-4xl">Una inteligencia que siempre está para ayudarte.</h2>
+              <h2 className="mt-4 text-3xl font-semibold sm:text-4xl">Una inteligencia para TODO lo que necesites sobre FLUXO</h2>
               <p className="mt-4 text-muted-foreground">Pregunta, crea y resuelve. Tus conversaciones se guardan de forma privada en tu cuenta.</p>
               <Button asChild variant="flow" size="xl" className="mt-8">
                 <Link to="/ia">
