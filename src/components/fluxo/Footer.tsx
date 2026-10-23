@@ -2,12 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { MessageCircle } from "lucide-react";
 import { Logo } from "./Logo";
 
-// Configura aquí tus enlaces y número de WhatsApp
+// Configura aquí tus enlaces oficiales de Fluxo
 export const SOCIAL_LINKS = {
- whatsapp: "https://api.whatsapp.com/send?phone=573122238923&text=Hola%20Fluxo,%20quisiera%20consultar%20sobre%20un%20servicio"
-  tiktok: "https://www.tiktok.com/@fluxo.co?_r=1&_t=ZS-9AncKyWd37F", // Cambia por tu usuario real
-  youtube: "https://www.youtube.com/@fluxoco"
-
+  whatsapp: "https://api.whatsapp.com/send?phone=573122238923&text=Hola%20Fluxo,%20quisiera%20consultar%20sobre%20un%20servicio",
+  tiktok: "https://www.tiktok.com/@fluxo.co?_r=1&_t=ZS-9AncKyWd37F",
+  youtube: "https://www.youtube.com/@fluxoco",
+};
 
 function TikTokIcon({ className }: { className?: string }) {
   return (
